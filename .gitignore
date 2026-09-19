@@ -1,0 +1,41 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Temporary files
+tmp/
+temp/
+
+# Raw and processed data
+data/raw/*
+data/processed/*
+!data/raw/README.md
+!data/processed/README.md
+
+# Model artifacts
+models/
+*.pkl
+*.joblib
+
+# LaTeX build files
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.xdv
+
+# IDE
+.vscode/
+.idea/
