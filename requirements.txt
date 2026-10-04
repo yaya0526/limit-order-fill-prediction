@@ -6,3 +6,5 @@ pandas
 scikit-learn
 seaborn
 ijson
+shap
+lime

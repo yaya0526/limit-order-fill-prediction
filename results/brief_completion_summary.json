@@ -1,0 +1,201 @@
+{
+  "status": "project_brief_model_and_explainability_requirements_completed",
+  "analysis_source_commit": "3b78e7db6aa0f047d8e8a523f3721b0a9a2d531a",
+  "project_brief_sha256": "de84f2e0bac18d6b078c0a2fa2b7ec57e325ad701c8b7b3d3015833907b163c5",
+  "raw_test_target_columns_read": false,
+  "frozen_final_policy_changed": false,
+  "requirements_completed": {
+    "empirical_logistic_tree_forest_validation_table": true,
+    "feature_sets_A_through_D": true,
+    "small_decision_tree_and_market_paths": true,
+    "rf_impurity_vs_permutation": true,
+    "shap_global_and_three_local_cases": true,
+    "lime_same_three_cases_five_random_seeds": true,
+    "same_order_across_5_30_60_seconds": true,
+    "shap_lime_disagreement_discussed": true
+  },
+  "selected_local_cases": [
+    {
+      "case_type": "high_probability",
+      "order_id": "ORD008229",
+      "target_fill_30s": 0.0,
+      "rf_30_probability": 0.8444553923200984
+    },
+    {
+      "case_type": "low_probability",
+      "order_id": "ORD008395",
+      "target_fill_30s": 0.0,
+      "rf_30_probability": 0.18887623604465703
+    },
+    {
+      "case_type": "uncertain",
+      "order_id": "ORD007710",
+      "target_fill_30s": 1.0,
+      "rf_30_probability": 0.5002772877449349
+    }
+  ],
+  "lime_stability": [
+    {
+      "case_type": "high_probability",
+      "mean_pairwise_top_feature_jaccard": 0.806060606060606,
+      "min_pairwise_top_feature_jaccard": 0.6666666666666666,
+      "mean_sign_agreement": 1.0,
+      "seeds": 5,
+      "top_n": 10
+    },
+    {
+      "case_type": "low_probability",
+      "mean_pairwise_top_feature_jaccard": 0.7757575757575758,
+      "min_pairwise_top_feature_jaccard": 0.6666666666666666,
+      "mean_sign_agreement": 0.975,
+      "seeds": 5,
+      "top_n": 10
+    },
+    {
+      "case_type": "uncertain",
+      "mean_pairwise_top_feature_jaccard": 0.8212121212121213,
+      "min_pairwise_top_feature_jaccard": 0.6666666666666666,
+      "mean_sign_agreement": 1.0,
+      "seeds": 5,
+      "top_n": 10
+    }
+  ],
+  "shap_lime_comparison": [
+    {
+      "case_type": "high_probability",
+      "top_10_overlap_count": 7,
+      "top_10_jaccard": 0.5384615384615384,
+      "shared_feature_sign_agreement": 1.0,
+      "shared_features": "aggressive_trade_volume_against_order_10s, five_level_side_imbalance, market_activity_group, normalized_queue_ahead, price_distance_ticks, queue_ahead_qty, same_price_total_qty"
+    },
+    {
+      "case_type": "low_probability",
+      "top_10_overlap_count": 8,
+      "top_10_jaccard": 0.6666666666666666,
+      "shared_feature_sign_agreement": 1.0,
+      "shared_features": "aggressive_trade_volume_against_order_10s, five_level_side_imbalance, normalized_queue_ahead, opposite_side_depth_5, price_distance_ticks, queue_ahead_qty, same_price_total_qty, trade_count_10s"
+    },
+    {
+      "case_type": "uncertain",
+      "top_10_overlap_count": 8,
+      "top_10_jaccard": 0.6666666666666666,
+      "shared_feature_sign_agreement": 1.0,
+      "shared_features": "market_activity_group, normalized_queue_ahead, opposite_side_depth_5, price_distance_ticks, queue_ahead_qty, same_price_total_qty, time_since_last_trade_ms, trade_count_10s"
+    }
+  ],
+  "rf_importance_agreement": [
+    {
+      "horizon_seconds": 5,
+      "spearman_rank_correlation": -0.1126530612244898,
+      "top_10_overlap_count": 3,
+      "top_10_jaccard": 0.17647058823529413
+    },
+    {
+      "horizon_seconds": 30,
+      "spearman_rank_correlation": -0.0573469387755102,
+      "top_10_overlap_count": 4,
+      "top_10_jaccard": 0.25
+    },
+    {
+      "horizon_seconds": 60,
+      "spearman_rank_correlation": 0.3488775510204081,
+      "top_10_overlap_count": 8,
+      "top_10_jaccard": 0.6666666666666666
+    }
+  ],
+  "top_shap_features": {
+    "5": [
+      {
+        "original_feature": "queue_ahead_qty",
+        "mean_absolute_shap_probability": 0.013925539371699868
+      },
+      {
+        "original_feature": "price_distance_ticks",
+        "mean_absolute_shap_probability": 0.01156749612337904
+      },
+      {
+        "original_feature": "same_price_total_qty",
+        "mean_absolute_shap_probability": 0.008392717903032565
+      },
+      {
+        "original_feature": "mid_price",
+        "mean_absolute_shap_probability": 0.008241281815248776
+      },
+      {
+        "original_feature": "microprice",
+        "mean_absolute_shap_probability": 0.007207495566734373
+      }
+    ],
+    "30": [
+      {
+        "original_feature": "queue_ahead_qty",
+        "mean_absolute_shap_probability": 0.038544372531437505
+      },
+      {
+        "original_feature": "price_distance_ticks",
+        "mean_absolute_shap_probability": 0.029630616033367665
+      },
+      {
+        "original_feature": "aggressive_trade_volume_against_order_10s",
+        "mean_absolute_shap_probability": 0.027982467518862877
+      },
+      {
+        "original_feature": "normalized_queue_ahead",
+        "mean_absolute_shap_probability": 0.02206214465931807
+      },
+      {
+        "original_feature": "same_price_total_qty",
+        "mean_absolute_shap_probability": 0.011891918140005545
+      }
+    ],
+    "60": [
+      {
+        "original_feature": "queue_ahead_qty",
+        "mean_absolute_shap_probability": 0.0347852568755516
+      },
+      {
+        "original_feature": "aggressive_trade_volume_against_order_10s",
+        "mean_absolute_shap_probability": 0.026684051810344615
+      },
+      {
+        "original_feature": "normalized_queue_ahead",
+        "mean_absolute_shap_probability": 0.0212315306610546
+      },
+      {
+        "original_feature": "price_distance_ticks",
+        "mean_absolute_shap_probability": 0.020526506335731946
+      },
+      {
+        "original_feature": "same_price_total_qty",
+        "mean_absolute_shap_probability": 0.013908908581242588
+      }
+    ]
+  },
+  "cross_horizon_order_id": "ORD007710",
+  "limitations": [
+    "SHAP and LIME explain model behavior and do not establish causality.",
+    "Correlated queue and LOB variables can split or substitute importance.",
+    "LIME stability is conditional on its sampling distribution and transformed feature space.",
+    "All new comparisons are validation-only; the final test policy remains unchanged."
+  ],
+  "artifacts": [
+    "validation_model_feature_results.csv",
+    "rq1_model_comparison.csv",
+    "decision_tree_paths_30s.csv",
+    "rf_impurity_permutation_comparison.csv",
+    "rf_importance_agreement.csv",
+    "shap_global_importance.csv",
+    "shap_local_explanations_30s.csv",
+    "lime_local_explanations_30s.csv",
+    "lime_consensus_30s.csv",
+    "lime_stability_30s.csv",
+    "shap_lime_comparison_30s.csv",
+    "cross_horizon_shap_explanation.csv",
+    "brief_decision_tree_30s.png",
+    "brief_rf_importance_comparison.png",
+    "brief_shap_global_importance.png",
+    "brief_shap_local_30s.png",
+    "brief_lime_seed_stability.png",
+    "brief_cross_horizon_shap.png"
+  ]
+}

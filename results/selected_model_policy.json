@@ -1,0 +1,72 @@
+{
+  "status": "validation_selected_test_not_evaluated",
+  "random_seed": 42,
+  "selection_rule": "For each candidate choose the calibration method with the lowest validation Brier score; then choose the candidate with the highest validation PR-AUC.",
+  "threshold_rule": "Maximize validation F1.",
+  "horizons": {
+    "5": {
+      "candidate": "B_logistic",
+      "feature_set": "B_order_lob",
+      "model": "logistic_regression",
+      "parameters": {
+        "C": 3.0
+      },
+      "calibration": "sigmoid",
+      "selected_threshold": 0.1890679194433173,
+      "validation_metrics": {
+        "roc_auc": 0.6646916143354884,
+        "pr_auc": 0.24662152565166678,
+        "brier_score": 0.08718308904421426,
+        "ece_10": 0.027248776187277394,
+        "accuracy": 0.8810996563573883,
+        "precision": 0.3867924528301887,
+        "recall": 0.2751677852348993,
+        "f1": 0.3215686274509804
+      }
+    },
+    "30": {
+      "candidate": "C_random_forest",
+      "feature_set": "C_order_lob_flow",
+      "model": "random_forest",
+      "parameters": {
+        "max_depth": null,
+        "min_samples_leaf": 20,
+        "max_features": 0.5
+      },
+      "calibration": "sigmoid",
+      "selected_threshold": 0.3472246821992208,
+      "validation_metrics": {
+        "roc_auc": 0.6822280534351145,
+        "pr_auc": 0.604296103915837,
+        "brier_score": 0.21375681969825786,
+        "ece_10": 0.03759283279820939,
+        "accuracy": 0.5808157099697885,
+        "precision": 0.4819557625145518,
+        "recall": 0.7900763358778626,
+        "f1": 0.5986984815618221
+      }
+    },
+    "60": {
+      "candidate": "C_random_forest",
+      "feature_set": "C_order_lob_flow",
+      "model": "random_forest",
+      "parameters": {
+        "max_depth": null,
+        "min_samples_leaf": 20,
+        "max_features": 0.5
+      },
+      "calibration": "sigmoid",
+      "selected_threshold": 0.34344255355537745,
+      "validation_metrics": {
+        "roc_auc": 0.7014531586474446,
+        "pr_auc": 0.7975724746903919,
+        "brier_score": 0.21083652957352073,
+        "ece_10": 0.059708699112346476,
+        "accuracy": 0.6325543916196615,
+        "precision": 0.6279264214046822,
+        "recall": 0.9855643044619422,
+        "f1": 0.7671092951991828
+      }
+    }
+  }
+}
