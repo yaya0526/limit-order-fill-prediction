@@ -1,0 +1,4 @@
+case_type,mean_pairwise_top_feature_jaccard,min_pairwise_top_feature_jaccard,mean_sign_agreement,seeds,top_n
+high_probability,0.806060606060606,0.6666666666666666,1.0,5,10
+low_probability,0.7757575757575758,0.6666666666666666,0.975,5,10
+uncertain,0.8212121212121213,0.6666666666666666,1.0,5,10

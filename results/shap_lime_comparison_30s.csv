@@ -1,0 +1,4 @@
+case_type,top_10_overlap_count,top_10_jaccard,shared_feature_sign_agreement,shared_features
+high_probability,7,0.5384615384615384,1.0,"aggressive_trade_volume_against_order_10s, five_level_side_imbalance, market_activity_group, normalized_queue_ahead, price_distance_ticks, queue_ahead_qty, same_price_total_qty"
+low_probability,8,0.6666666666666666,1.0,"aggressive_trade_volume_against_order_10s, five_level_side_imbalance, normalized_queue_ahead, opposite_side_depth_5, price_distance_ticks, queue_ahead_qty, same_price_total_qty, trade_count_10s"
+uncertain,8,0.6666666666666666,1.0,"market_activity_group, normalized_queue_ahead, opposite_side_depth_5, price_distance_ticks, queue_ahead_qty, same_price_total_qty, time_since_last_trade_ms, trade_count_10s"
