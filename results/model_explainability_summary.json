@@ -1,0 +1,189 @@
+{
+  "status": "frozen_models_explained",
+  "analysis_source_commit": "bb356563c784d29795c014c6c4931c3982e3008b",
+  "frozen_policy_sha256": "92a6631d142c8cd493898b9c1934ebed4ac553b9dc41e189b4323b2d60a3f78d",
+  "methods": {
+    "5s": "standardized logistic coefficients",
+    "30s_60s": "validation PR-AUC permutation importance with 20 repeats",
+    "feature_groups": "joint validation permutation with 50 repeats",
+    "response_profiles": "validation quantile-bin observed and calibrated predicted rates",
+    "case_studies": "deterministic cases from committed final-test predictions"
+  },
+  "raw_test_target_columns_read": false,
+  "test_predictions_used_for_model_selection": false,
+  "top_5s_positive_numeric_coefficients": [
+    {
+      "display_feature": "queue_ahead_qty",
+      "coefficient": 0.3089262347334959,
+      "odds_ratio": 1.3619619013152804
+    },
+    {
+      "display_feature": "same_side_depth_5",
+      "coefficient": 0.13748386586226768,
+      "odds_ratio": 1.1473831937842534
+    },
+    {
+      "display_feature": "ask_volume_l5",
+      "coefficient": 0.12204158597101282,
+      "odds_ratio": 1.129801084678555
+    },
+    {
+      "display_feature": "order_size",
+      "coefficient": 0.083932774592499,
+      "odds_ratio": 1.0875557799708113
+    },
+    {
+      "display_feature": "ask_volume_l2",
+      "coefficient": 0.06011657143404044,
+      "odds_ratio": 1.0619603335691823
+    }
+  ],
+  "top_5s_negative_numeric_coefficients": [
+    {
+      "display_feature": "price_distance_ticks",
+      "coefficient": -0.5776415298099637,
+      "odds_ratio": 0.561220428581506
+    },
+    {
+      "display_feature": "same_price_total_qty",
+      "coefficient": -0.32824558816313704,
+      "odds_ratio": 0.7201861287965459
+    },
+    {
+      "display_feature": "normalized_queue_ahead",
+      "coefficient": -0.24003337577784578,
+      "odds_ratio": 0.7866016071879394
+    },
+    {
+      "display_feature": "five_level_side_imbalance",
+      "coefficient": -0.2114079153712358,
+      "odds_ratio": 0.8094438149541654
+    },
+    {
+      "display_feature": "oriented_top_level_imbalance",
+      "coefficient": -0.17440025157718383,
+      "odds_ratio": 0.8399606347992
+    }
+  ],
+  "5s_categorical_contrasts": [
+    {
+      "original_feature": "side",
+      "comparison_level": "sell",
+      "reference_level": "buy",
+      "contrast_label": "side: sell vs buy",
+      "log_odds_contrast": -0.0012758787104104607,
+      "odds_ratio_contrast": 0.9987249348767817,
+      "direction": "lower_fill_probability"
+    },
+    {
+      "original_feature": "session_phase",
+      "comparison_level": "closing",
+      "reference_level": "continuous",
+      "contrast_label": "session_phase: closing vs continuous",
+      "log_odds_contrast": -0.06733576076265302,
+      "odds_ratio_contrast": 0.9348812521915979,
+      "direction": "lower_fill_probability"
+    },
+    {
+      "original_feature": "session_phase",
+      "comparison_level": "opening",
+      "reference_level": "continuous",
+      "contrast_label": "session_phase: opening vs continuous",
+      "log_odds_contrast": -0.08270230669444817,
+      "odds_ratio_contrast": 0.9206251703808156,
+      "direction": "lower_fill_probability"
+    }
+  ],
+  "top_30s_permutation_features": [
+    {
+      "feature": "queue_ahead_qty",
+      "pr_auc_decrease_mean": 0.06087058468196484,
+      "pr_auc_decrease_std": 0.01069178248341865
+    },
+    {
+      "feature": "normalized_queue_ahead",
+      "pr_auc_decrease_mean": 0.0441982520399958,
+      "pr_auc_decrease_std": 0.00729614125560181
+    },
+    {
+      "feature": "aggressive_trade_volume_against_order_10s",
+      "pr_auc_decrease_mean": 0.03980321922486091,
+      "pr_auc_decrease_std": 0.010132118593107272
+    },
+    {
+      "feature": "price_distance_ticks",
+      "pr_auc_decrease_mean": 0.017390790863912892,
+      "pr_auc_decrease_std": 0.005514723934942562
+    },
+    {
+      "feature": "five_level_side_imbalance",
+      "pr_auc_decrease_mean": 0.0051771716122073815,
+      "pr_auc_decrease_std": 0.00280566956295866
+    }
+  ],
+  "top_60s_permutation_features": [
+    {
+      "feature": "queue_ahead_qty",
+      "pr_auc_decrease_mean": 0.04240400929863062,
+      "pr_auc_decrease_std": 0.00796126510749141
+    },
+    {
+      "feature": "aggressive_trade_volume_against_order_10s",
+      "pr_auc_decrease_mean": 0.03033440692247727,
+      "pr_auc_decrease_std": 0.0068463639188335555
+    },
+    {
+      "feature": "normalized_queue_ahead",
+      "pr_auc_decrease_mean": 0.029282228040970644,
+      "pr_auc_decrease_std": 0.004297622347144526
+    },
+    {
+      "feature": "price_distance_ticks",
+      "pr_auc_decrease_mean": 0.02101489023356664,
+      "pr_auc_decrease_std": 0.004093619941007822
+    },
+    {
+      "feature": "five_level_side_imbalance",
+      "pr_auc_decrease_mean": 0.004105516219003924,
+      "pr_auc_decrease_std": 0.0026853014070541735
+    }
+  ],
+  "top_feature_group_by_horizon": {
+    "5": {
+      "feature_group": "order_state",
+      "pr_auc_decrease_mean": 0.11625520278955898,
+      "pr_auc_decrease_std": 0.008495302913840368
+    },
+    "30": {
+      "feature_group": "order_state",
+      "pr_auc_decrease_mean": 0.16971629972733396,
+      "pr_auc_decrease_std": 0.014302669732810058
+    },
+    "60": {
+      "feature_group": "order_state",
+      "pr_auc_decrease_mean": 0.13827154549144954,
+      "pr_auc_decrease_std": 0.014078644840424837
+    }
+  },
+  "limitations": [
+    "Associations and permutation decreases are not causal effects.",
+    "Correlated LOB features can share or mask individual importance.",
+    "Categorical effects are coefficient contrasts within each full one-hot feature, not causal effects.",
+    "Case studies are descriptive and were not used to revise the frozen policy."
+  ],
+  "artifacts": [
+    "logistic_coefficients_5s.csv",
+    "logistic_categorical_contrasts_5s.csv",
+    "permutation_importance_30s.csv",
+    "permutation_importance_60s.csv",
+    "grouped_permutation_importance.csv",
+    "validation_response_profiles.csv",
+    "explanation_case_studies.csv",
+    "explanation_case_features.csv",
+    "explainability_reproduction_check.csv",
+    "explainability_logistic_coefficients_5s.png",
+    "explainability_permutation_importance_rf.png",
+    "explainability_group_importance.png",
+    "explainability_response_profiles.png"
+  ]
+}

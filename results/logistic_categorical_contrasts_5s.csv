@@ -1,0 +1,4 @@
+original_feature,comparison_level,reference_level,contrast_label,log_odds_contrast,odds_ratio_contrast,direction
+side,sell,buy,side: sell vs buy,-0.0012758787104104607,0.9987249348767817,lower_fill_probability
+session_phase,closing,continuous,session_phase: closing vs continuous,-0.06733576076265302,0.9348812521915979,lower_fill_probability
+session_phase,opening,continuous,session_phase: opening vs continuous,-0.08270230669444817,0.9206251703808156,lower_fill_probability
