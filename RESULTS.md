@@ -89,6 +89,8 @@ See [`results/final_test_slice_metrics.csv`](results/final_test_slice_metrics.cs
 - **Uncertainty:** row-level resampling can understate uncertainty when observations share the same day or market regime.
 - **No economic backtest:** fill classification is not equivalent to realized implementation shortfall or trading profitability.
 
+The full evidence boundary, follow-up questions, and measurable acceptance criteria are documented in [`docs/limitations_and_roadmap.md`](docs/limitations_and_roadmap.md).
+
 ## Reproducibility and provenance
 
 The study uses the supplied chronological 14/3/3-day split and random seed 42. Final policies were frozen before the one-time test evaluation. Raw teaching data are not redistributed, but derived outputs and committed notebook results are included for auditability. See [`data/README.md`](data/README.md) for the local input contract.
