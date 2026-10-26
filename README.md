@@ -37,7 +37,7 @@ Full tables, caveats, and artifact links are in [`RESULTS.md`](RESULTS.md).
 
 The prediction question is:
 
-> Given information available at observation time \(t_0\), what is the probability that an active resting limit order fills within a fixed horizon?
+> Given information available at observation time $t_0$, what is the probability that an active resting limit order fills within a fixed horizon?
 
 The design protects the time ordering of the problem:
 
