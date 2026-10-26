@@ -2,6 +2,8 @@ cff-version: 1.2.0
 message: "If you use this research code or its results, please cite it as follows."
 title: "Limit Order Fill Probability Prediction"
 type: software
+version: 0.1.0
+date-released: 2026-10-26
 authors:
   - name: "yaya0526"
     website: "https://github.com/yaya0526"

@@ -1,6 +1,6 @@
 PYTHON ?= python3
 
-.PHONY: install check test ci
+.PHONY: install check test demo ci
 
 install:
 	$(PYTHON) -m pip install -r requirements-dev.txt
@@ -11,4 +11,7 @@ check:
 test:
 	$(PYTHON) -m pytest -q
 
-ci: check test
+demo:
+	$(PYTHON) scripts/demo_results.py
+
+ci: check test demo

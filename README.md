@@ -1,6 +1,7 @@
 # Limit Order Fill Probability Prediction
 
 [![CI](https://github.com/yaya0526/limit-order-fill-prediction/actions/workflows/ci.yml/badge.svg)](https://github.com/yaya0526/limit-order-fill-prediction/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/yaya0526/limit-order-fill-prediction)](https://github.com/yaya0526/limit-order-fill-prediction/releases/latest)
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-3110/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -12,6 +13,16 @@ This repository turns order state, queue position, limit-order-book conditions, 
 
 > [!IMPORTANT]
 > The dataset is deterministic synthetic teaching data. Results must not be interpreted as evidence about real AAPL or Nasdaq execution.
+
+## 60-second reviewer demo
+
+Inspect the committed held-out results without the restricted raw data or third-party packages:
+
+```bash
+python scripts/demo_results.py
+```
+
+The command validates the published metric table, prints the frozen 5-, 30-, and 60-second policies, and surfaces the main interpretation caveats. Add `--json` for machine-readable output. This is the fastest path for a reviewer; the full notebook workflow remains documented below.
 
 ## Results at a glance
 
@@ -81,9 +92,11 @@ Each horizon has its own eligibility mask to handle right-censoring. Rows withou
 | [`data/README.md`](data/README.md) | Local data setup, provenance, and integrity checks |
 | [`tests/`](tests/) | Raw-data-free unit and repository-contract tests |
 | [`scripts/check_repository.py`](scripts/check_repository.py) | One-command validation of published artifacts and links |
+| [`scripts/demo_results.py`](scripts/demo_results.py) | Standard-library demo of the committed held-out results |
+| [`docs/limitations_and_roadmap.md`](docs/limitations_and_roadmap.md) | Evidence boundaries and prioritized follow-up research |
 | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | Automated Python 3.11 checks for pushes and pull requests |
 
-## Quick start
+## Full reproduction
 
 ### 1. Create the environment
 
@@ -141,7 +154,7 @@ These commands validate the reusable code, notebook structure, result schemas, l
 
 ## What this project does—and does not—show
 
-This project demonstrates a disciplined fixed-horizon probability-modelling workflow on synthetic data. It does not claim a profitable trading strategy, live execution readiness, causal effects, or transferability to real exchange data. Important next steps include a fully locked dependency snapshot, raw-data-enabled notebook execution, survival-analysis extensions, and evaluation on real or independently simulated data.
+This project demonstrates a disciplined fixed-horizon probability-modelling workflow on synthetic data. It does not claim a profitable trading strategy, live execution readiness, causal effects, or transferability to real exchange data. The detailed [`limitations and research roadmap`](docs/limitations_and_roadmap.md) prioritizes rolling-origin robustness, dependence-aware uncertainty, time-to-fill modelling, decision-aware thresholds, and independent-data validation.
 
 ## Reports and research artifacts
 
@@ -152,6 +165,9 @@ This project demonstrates a disciplined fixed-horizon probability-modelling work
 - [`results/validation_test_comparison.csv`](results/validation_test_comparison.csv): generalization deltas
 - [`docs/feature_reference.md`](docs/feature_reference.md): feature definitions
 - [`docs/reproducibility.md`](docs/reproducibility.md): environment and verification instructions
+- [`docs/limitations_and_roadmap.md`](docs/limitations_and_roadmap.md): evidence boundary and research plan
+- [`docs/releases/v0.1.0.md`](docs/releases/v0.1.0.md): first public release notes
+- [`CHANGELOG.md`](CHANGELOG.md): repository change history
 
 ## Citation and license
 

@@ -15,11 +15,15 @@ ROOT = Path(__file__).resolve().parents[1]
 REQUIRED_PATHS = (
     "README.md",
     "RESULTS.md",
+    "CHANGELOG.md",
     "CITATION.cff",
     "LICENSE",
     "requirements.txt",
     "data/README.md",
     "docs/feature_reference.md",
+    "docs/limitations_and_roadmap.md",
+    "docs/releases/v0.1.0.md",
+    "scripts/demo_results.py",
     "results/final_test_metrics.csv",
     "results/final_test_summary.json",
     "results/selected_model_policy.json",
@@ -78,6 +82,19 @@ PERSONAL_PATH_PATTERNS = (
     re.compile(r"/home/[^/\s]+/"),
     re.compile(r"[A-Za-z]:\\Users\\[^\\\s]+\\"),
 )
+
+IGNORED_DIRECTORY_NAMES = {
+    ".git",
+    ".venv",
+    "__pycache__",
+    "env",
+    "node_modules",
+    "venv",
+}
+
+
+def is_ignored_path(path: Path) -> bool:
+    return any(part in IGNORED_DIRECTORY_NAMES for part in path.relative_to(ROOT).parts)
 
 
 def validate_required_paths() -> list[str]:
@@ -160,8 +177,10 @@ def validate_json_artifacts() -> list[str]:
 def validate_markdown_links() -> list[str]:
     errors: list[str] = []
     link_pattern = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
-    for relative in ("README.md", "RESULTS.md", "data/README.md"):
-        path = ROOT / relative
+    for path in sorted(ROOT.rglob("*.md")):
+        if is_ignored_path(path):
+            continue
+        relative = path.relative_to(ROOT)
         text = path.read_text(encoding="utf-8")
         for raw_target in link_pattern.findall(text):
             target = raw_target.strip().strip("<>").split("#", 1)[0]
@@ -179,7 +198,7 @@ def validate_no_personal_paths() -> list[str]:
     errors: list[str] = []
     this_file = Path(__file__).resolve()
     for path in ROOT.rglob("*"):
-        if not path.is_file() or ".git" in path.parts:
+        if not path.is_file() or is_ignored_path(path):
             continue
         if path.resolve() == this_file:
             continue

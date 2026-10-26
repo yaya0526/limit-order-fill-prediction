@@ -37,5 +37,10 @@ jobs:
       - name: Validate published artifacts
         run: python scripts/check_repository.py
 
+      - name: Smoke-test reviewer demo
+        run: |
+          python scripts/demo_results.py
+          python scripts/demo_results.py --json
+
       - name: Run unit tests
         run: python -m pytest -q
