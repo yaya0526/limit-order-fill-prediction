@@ -9,7 +9,7 @@
 
 This repository turns order state, queue position, limit-order-book conditions, and recent order flow into calibrated fill-probability estimates. The workflow uses a chronological train/validation/test split, freezes model and threshold choices before opening the test set, and reports both predictive performance and failure modes.
 
-**Project status:** the core research workflow and the first rolling-origin robustness extension are complete, with automated raw-data-free validation and unit tests. Full notebook execution still requires the restricted source data.
+**Project status:** the core workflow, rolling-origin robustness audit, and coherent time-to-fill extension are complete, with automated raw-data-free validation and unit tests. Full notebook execution still requires the restricted source data.
 
 > [!IMPORTANT]
 > The dataset is deterministic synthetic teaching data. Results must not be interpreted as evidence about real AAPL or Nasdaq execution.
@@ -62,6 +62,20 @@ The 30- and 60-second ranking results are stable across windows. The 60-second p
 
 ![Rolling-origin robustness](reports/figures/rolling_origin_robustness.png)
 
+### Coherent time-to-fill probabilities
+
+A discrete-time hazard model now produces a single cumulative fill distribution across the three horizons. It handles cancellation/expiry as right-censoring and eliminates contradictory cross-horizon probabilities.
+
+| Horizon | Hazard PR-AUC | Independent PR-AUC | Hazard Brier | Independent Brier |
+|---:|---:|---:|---:|---:|
+| 5s | 0.162 | 0.170 | 0.103 | 0.102 |
+| 30s | 0.614 | 0.600 | 0.226 | 0.230 |
+| 60s | 0.815 | 0.805 | 0.203 | 0.205 |
+
+The model records zero monotonicity violations across 3,000 validation/test orders. It improves the 30- and 60-second results slightly but gives up some 5-second performance. See the [`time-to-fill study`](docs/time_to_fill_model.md) for risk-set construction and limitations.
+
+![Time-to-fill coherence](reports/figures/time_to_fill_coherence.png)
+
 ## Research design
 
 The prediction question is:
@@ -93,6 +107,9 @@ The design protects the time ordering of the problem:
                          │
                          ▼
       three-window rolling-origin robustness audit
+                         │
+                         ▼
+     censoring-aware discrete-time fill-hazard model
 ```
 
 Each horizon has its own eligibility mask to handle right-censoring. Rows without enough observation time are excluded rather than labelled as non-fills.
@@ -111,8 +128,10 @@ Each horizon has its own eligibility mask to handle right-censoring. Rows withou
 | [`scripts/check_repository.py`](scripts/check_repository.py) | One-command validation of published artifacts and links |
 | [`scripts/demo_results.py`](scripts/demo_results.py) | Standard-library demo of the committed held-out results |
 | [`scripts/run_rolling_origin.py`](scripts/run_rolling_origin.py) | Reproducible rolling-origin robustness experiment |
+| [`scripts/run_time_to_fill.py`](scripts/run_time_to_fill.py) | Reproducible censoring-aware time-to-fill experiment |
 | [`docs/limitations_and_roadmap.md`](docs/limitations_and_roadmap.md) | Evidence boundaries and prioritized follow-up research |
 | [`docs/rolling_origin_robustness.md`](docs/rolling_origin_robustness.md) | R1 design, results, uncertainty, and limitations |
+| [`docs/time_to_fill_model.md`](docs/time_to_fill_model.md) | R2 hazard construction, coherence tests, and results |
 | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | Automated Python 3.11 checks for pushes and pull requests |
 
 ## Full reproduction
@@ -160,6 +179,12 @@ The R1 robustness extension uses only the Excel workbook because the frozen poli
 python scripts/run_rolling_origin.py --excel data/raw/AI_Order_Execution.xlsx
 ```
 
+Run the coherent time-to-fill extension with the same workbook:
+
+```bash
+python scripts/run_time_to_fill.py --excel data/raw/AI_Order_Execution.xlsx
+```
+
 ### 4. Run the raw-data-free checks
 
 ```bash
@@ -175,13 +200,14 @@ These commands validate the reusable code, notebook structure, result schemas, l
 - **No test-set tuning:** model, calibration method, and classification threshold are frozen first.
 - **Rolling-origin audit:** three additional chronological test windows measure temporal dispersion without touching the original final test period.
 - **Dependence-aware uncertainty:** the robustness extension resamples whole trading days rather than individual rows.
+- **Censoring-aware event time:** the hazard extension excludes within-interval censoring and guarantees non-decreasing cumulative probabilities.
 - **Imbalance-aware metrics:** PR-AUC, Brier score, expected calibration error, and horizon-specific fill rates complement ROC-AUC.
 - **Ablation before complexity:** feature groups are added incrementally to identify whether LOB, order flow, and history features earn their complexity.
 - **Interpretability with limits:** SHAP and LIME describe model behaviour; they do not establish causal market mechanisms.
 
 ## What this project does—and does not—show
 
-This project demonstrates a disciplined fixed-horizon probability-modelling workflow on synthetic data. It does not claim a profitable trading strategy, live execution readiness, causal effects, or transferability to real exchange data. The detailed [`limitations and research roadmap`](docs/limitations_and_roadmap.md) records the completed rolling-origin milestone and prioritizes time-to-fill modelling, decision-aware thresholds, and independent-data validation.
+This project demonstrates disciplined fixed-horizon and event-time probability workflows on synthetic data. It does not claim a profitable trading strategy, live execution readiness, causal effects, or transferability to real exchange data. The detailed [`limitations and research roadmap`](docs/limitations_and_roadmap.md) records the completed R1–R2 milestones and prioritizes decision-aware thresholds and independent-data validation.
 
 ## Reports and research artifacts
 
@@ -192,6 +218,8 @@ This project demonstrates a disciplined fixed-horizon probability-modelling work
 - [`results/validation_test_comparison.csv`](results/validation_test_comparison.csv): generalization deltas
 - [`results/rolling_origin_summary.csv`](results/rolling_origin_summary.csv): rolling-window means, dispersion, pooled metrics, and block intervals
 - [`docs/rolling_origin_robustness.md`](docs/rolling_origin_robustness.md): robustness methodology and interpretation
+- [`results/time_to_fill_metrics.csv`](results/time_to_fill_metrics.csv): coherent hazard-model discrimination and calibration
+- [`docs/time_to_fill_model.md`](docs/time_to_fill_model.md): censoring, probability coherence, and R2 interpretation
 - [`docs/feature_reference.md`](docs/feature_reference.md): feature definitions
 - [`docs/reproducibility.md`](docs/reproducibility.md): environment and verification instructions
 - [`docs/limitations_and_roadmap.md`](docs/limitations_and_roadmap.md): evidence boundary and research plan

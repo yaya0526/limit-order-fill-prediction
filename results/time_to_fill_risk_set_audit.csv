@@ -1,0 +1,4 @@
+interval_start_s,interval_end_s,training_risk_rows,training_events,training_event_rate,calibration_folds,calibration_oof_rows,calibration_oof_event_rate
+0,5,6807,711,0.10445130013221683,4,3882,0.1035548686244204
+5,30,5462,1870,0.34236543390699375,4,3123,0.34390009606147937
+30,60,3196,1076,0.33667083854818525,4,1828,0.3440919037199125
