@@ -4,6 +4,17 @@ All notable public repository changes are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- three-window rolling-origin robustness evaluation with forward-only calibration;
+- trading-day block bootstrap intervals and cross-window dispersion summaries;
+- row-level rolling prediction audit, machine-readable acceptance record, and stability figure;
+- reproducible R1 command, methodology note, and four unit tests.
+
+### Changed
+
+- repository summary and roadmap now distinguish the completed R1 milestone from the remaining time-to-fill and decision-utility work.
+
 ## [0.1.0] — 2026-10-26
 
 ### Added

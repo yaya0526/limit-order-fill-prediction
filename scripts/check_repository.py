@@ -22,11 +22,18 @@ REQUIRED_PATHS = (
     "data/README.md",
     "docs/feature_reference.md",
     "docs/limitations_and_roadmap.md",
+    "docs/rolling_origin_robustness.md",
     "docs/releases/v0.1.0.md",
     "scripts/demo_results.py",
+    "scripts/run_rolling_origin.py",
     "results/final_test_metrics.csv",
     "results/final_test_summary.json",
+    "results/rolling_origin_predictions.csv",
+    "results/rolling_origin_summary.csv",
+    "results/rolling_origin_summary.json",
+    "results/rolling_origin_window_metrics.csv",
     "results/selected_model_policy.json",
+    "reports/figures/rolling_origin_robustness.png",
 )
 
 EXPECTED_NOTEBOOKS = (
@@ -174,6 +181,74 @@ def validate_json_artifacts() -> list[str]:
     return errors
 
 
+def validate_rolling_origin() -> list[str]:
+    errors: list[str] = []
+    path = ROOT / "results" / "rolling_origin_window_metrics.csv"
+    with path.open(newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle))
+
+    expected_pairs = [(horizon, window) for horizon in (5, 30, 60) for window in ("W1", "W2", "W3")]
+    actual_pairs = [(int(row["horizon_seconds"]), row["window_id"]) for row in rows]
+    if actual_pairs != expected_pairs:
+        errors.append(f"unexpected rolling-origin horizon/window sequence: {actual_pairs}")
+        return errors
+
+    window_ranges: dict[str, tuple[str, str]] = {}
+    for row in rows:
+        eligible = int(row["eligible_rows"])
+        confusion_total = sum(int(row[key]) for key in ("tn", "fp", "fn", "tp"))
+        if confusion_total != eligible:
+            errors.append(
+                f"rolling {row['horizon_seconds']}s {row['window_id']} confusion total "
+                f"{confusion_total}, not {eligible}"
+            )
+        for key in (
+            "selected_threshold",
+            "true_fill_rate",
+            "predicted_fill_rate",
+            "roc_auc",
+            "pr_auc",
+            "brier_score",
+            "ece_10",
+            "accuracy",
+            "precision",
+            "recall",
+            "f1",
+        ):
+            value = float(row[key])
+            if not 0 <= value <= 1:
+                errors.append(
+                    f"rolling {row['horizon_seconds']}s {row['window_id']} "
+                    f"{key} is outside [0, 1]: {value}"
+                )
+        observed_range = (row["test_start"], row["test_end"])
+        existing_range = window_ranges.setdefault(row["window_id"], observed_range)
+        if existing_range != observed_range:
+            errors.append(f"inconsistent dates for rolling window {row['window_id']}")
+
+    ordered_ranges = sorted(window_ranges.values())
+    for previous, current in zip(ordered_ranges, ordered_ranges[1:]):
+        if previous[1] >= current[0]:
+            errors.append(f"overlapping rolling test windows: {previous} and {current}")
+
+    summary_path = ROOT / "results" / "rolling_origin_summary.json"
+    try:
+        summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        errors.append(f"invalid JSON results/rolling_origin_summary.json: {exc}")
+        return errors
+    acceptance = summary.get("acceptance", {})
+    if acceptance.get("observed_non_overlapping_test_windows") != 3:
+        errors.append("rolling-origin summary must report three non-overlapping test windows")
+    if acceptance.get("dispersion_reported_with_mean") is not True:
+        errors.append("rolling-origin summary must report dispersion with mean performance")
+    if acceptance.get("passed") is not True:
+        errors.append("rolling-origin acceptance record is not passing")
+    if summary.get("design", {}).get("original_final_test_untouched") is not True:
+        errors.append("rolling-origin summary must keep the original final test untouched")
+    return errors
+
+
 def validate_markdown_links() -> list[str]:
     errors: list[str] = []
     link_pattern = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
@@ -220,6 +295,7 @@ def validate_repository() -> list[str]:
         validate_notebooks,
         validate_metrics,
         validate_json_artifacts,
+        validate_rolling_origin,
         validate_markdown_links,
         validate_no_personal_paths,
     ):

@@ -35,6 +35,22 @@ The 5-second gap is the clearest sign that the development-period estimate was o
 
 ![Validation versus test metrics](reports/figures/final_test_validation_comparison.png)
 
+## Rolling-origin robustness
+
+The frozen v0.1.0 feature sets, model families, and hyperparameters were refitted across three expanding-origin windows. Each window used only past data for sigmoid calibration and an immediately preceding two-day validation period for its F1 threshold. The six rolling test days do not overlap, and the original three-day final test period was not reopened.
+
+| Horizon | PR-AUC, mean ± SD | Brier, mean ± SD | F1, mean ± SD | Pooled predicted positive rate |
+|---:|---:|---:|---:|---:|
+| 5s | 0.208 ± 0.021 | 0.093 ± 0.005 | 0.241 ± 0.027 | 0.433 |
+| 30s | 0.616 ± 0.002 | 0.221 ± 0.004 | 0.617 ± 0.016 | 0.734 |
+| 60s | 0.792 ± 0.004 | 0.212 ± 0.002 | 0.779 ± 0.017 | 0.941 |
+
+The 30- and 60-second policies retain stable ranking performance, while the 5-second task remains weaker and more threshold-sensitive. At 60 seconds the predicted positive rate stays between 92.4% and 96.0% in all three windows, confirming that weak selectivity is persistent rather than isolated to the final holdout.
+
+![Rolling-origin robustness](reports/figures/rolling_origin_robustness.png)
+
+The full design, trading-day block intervals, and post-selection limitation are documented in [`docs/rolling_origin_robustness.md`](docs/rolling_origin_robustness.md). Machine-readable results are in [`results/rolling_origin_window_metrics.csv`](results/rolling_origin_window_metrics.csv) and [`results/rolling_origin_summary.json`](results/rolling_origin_summary.json).
+
 ## Feature-set conclusions
 
 The experiment compares cumulative feature groups:
@@ -76,6 +92,8 @@ See [`results/final_test_slice_metrics.csv`](results/final_test_slice_metrics.cs
 | [`results/validation_test_comparison.csv`](results/validation_test_comparison.csv) | Development-to-test changes |
 | [`results/validation_model_feature_results.csv`](results/validation_model_feature_results.csv) | Model and feature-set selection results |
 | [`results/final_test_slice_metrics.csv`](results/final_test_slice_metrics.csv) | Side, regime, and day slices |
+| [`results/rolling_origin_window_metrics.csv`](results/rolling_origin_window_metrics.csv) | R1 metrics for three non-overlapping test windows |
+| [`results/rolling_origin_summary.json`](results/rolling_origin_summary.json) | R1 aggregates, day-block intervals, and acceptance record |
 | [`results/brief_completion_summary.json`](results/brief_completion_summary.json) | Checklist against the project brief |
 | [`reports/figures/`](reports/figures/) | Calibration, discrimination, ablation, and explanation plots |
 | [`reports/`](reports/) | Technical report and presentation |
@@ -86,11 +104,11 @@ See [`results/final_test_slice_metrics.csv`](results/final_test_slice_metrics.cs
 - **Single symbol:** cross-sectional transfer is untested.
 - **Fixed horizons:** this is not a full time-to-event or competing-risk model.
 - **Threshold dependence:** ranking and calibration metrics do not guarantee a useful execution decision rule.
-- **Uncertainty:** row-level resampling can understate uncertainty when observations share the same day or market regime.
+- **Uncertainty:** the final holdout still uses row-level intervals; the R1 extension adds day-block intervals but has only six independent rolling test days.
 - **No economic backtest:** fill classification is not equivalent to realized implementation shortfall or trading profitability.
 
 The full evidence boundary, follow-up questions, and measurable acceptance criteria are documented in [`docs/limitations_and_roadmap.md`](docs/limitations_and_roadmap.md).
 
 ## Reproducibility and provenance
 
-The study uses the supplied chronological 14/3/3-day split and random seed 42. Final policies were frozen before the one-time test evaluation. Raw teaching data are not redistributed, but derived outputs and committed notebook results are included for auditability. See [`data/README.md`](data/README.md) for the local input contract.
+The study uses the supplied chronological 14/3/3-day split and random seed 42. Final policies were frozen before the one-time test evaluation. R1 then audits those specifications across three earlier rolling origins and records its post-selection limitation explicitly. Raw teaching data are not redistributed, but derived outputs and committed notebook results are included for auditability. See [`data/README.md`](data/README.md) for the local input contract.

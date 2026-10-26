@@ -16,11 +16,11 @@ The supplied data emulate AAPL-like order-book behaviour but do not reproduce ev
 
 **Consequence:** the measured discrimination and calibration describe this generator and split, not real Nasdaq execution.
 
-### 2. One chronological development/test split
+### 2. Limited chronological coverage
 
-The 14/3/3-day split protects time order and keeps the test period untouched during model selection. It is still only one realized split. The 5-second validation-to-test deterioration shows why a single development period can be optimistic.
+The 14/3/3-day split protects time order and keeps the test period untouched during model selection. R1 adds three non-overlapping rolling test windows and day-block uncertainty, but all windows still come from one 20-day synthetic sequence. The 5-second variation shows why short-horizon conclusions remain sensitive to period and threshold choice.
 
-**Consequence:** performance uncertainty across dates and market regimes is only partially measured.
+**Consequence:** short-run temporal dispersion is measured more clearly, but long-run regime transfer remains untested.
 
 ### 3. Fixed-horizon binary targets
 
@@ -54,13 +54,15 @@ SHAP, LIME, permutation importance, and response profiles explain how fitted mod
 
 ## Prioritized research roadmap
 
-### R1 — Rolling-origin robustness
+### R1 — Rolling-origin robustness — complete
 
 **Question:** do model rankings and calibration persist across multiple chronological test windows?
 
 **Method:** repeat training and evaluation with several expanding or rolling windows; report per-window and aggregated metrics. Add day- or block-level bootstrap intervals.
 
 **Acceptance criterion:** every selected policy has results from at least three non-overlapping test windows, with dispersion reported alongside mean performance.
+
+**Completion:** three expanding-origin windows now report per-window metrics, mean, standard deviation, range, and pooled trading-day block intervals. The original final test period remains untouched. See [`rolling_origin_robustness.md`](rolling_origin_robustness.md).
 
 ### R2 — Time-to-fill modelling
 
@@ -96,10 +98,10 @@ SHAP, LIME, permutation importance, and response profiles explain how fitted mod
 
 ## Recommended execution order
 
-1. Complete R1 before adding more model complexity.
+1. R1 is complete; retain it as the temporal-stability baseline.
 2. Use R2 to replace disconnected horizon classifiers with a coherent event-time formulation.
 3. Add R3 before describing any result as operationally useful.
 4. Use R4 as a public robustness benchmark.
 5. Attempt R5 only with properly licensed data and documented exchange semantics.
 
-The next research milestone should therefore be **robustness before sophistication**: repeated chronological evaluation and dependence-aware uncertainty are higher priority than another model family.
+The next research milestone is **coherence before another classifier**: use R2 to model time to fill directly, then use R3 to connect thresholds to an explicit decision objective.
