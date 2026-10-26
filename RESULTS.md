@@ -67,6 +67,22 @@ The coherent model records zero decreasing probability paths across all 3,000 va
 
 See [`docs/time_to_fill_model.md`](docs/time_to_fill_model.md) for the hazard equations, risk-set audit, acceptance decision, and competing-risk limitation.
 
+## Decision-aware thresholds
+
+R3 replaces F1-only threshold selection with a validation objective that assigns normalized cost 3 to false positives and 1 to false negatives. This primary scenario treats waiting/opportunity cost as more important than a missed passive fill. A 1%–80% validation action-rate guardrail prevents degenerate no-action or near-universal policies.
+
+| Horizon | Original F1 positive rate | Cost-policy positive rate | Original cost/order | Cost-policy cost/order | Cost-policy precision | Cost-policy recall |
+|---:|---:|---:|---:|---:|---:|---:|
+| 5s | 0.064 | 0.008 | 0.253 | 0.134 | 0.250 | 0.017 |
+| 30s | 0.642 | 0.047 | 1.044 | 0.443 | 0.758 | 0.081 |
+| 60s | 0.964 | 0.204 | 0.999 | 0.533 | 0.885 | 0.281 |
+
+The cost-based 60-second policy is no longer near-universal and is much more precise, but its recall falls substantially. The primary 5-second policy is extremely conservative. Balanced and fill-seeking sensitivity scenarios confirm that the operating point is driven by the cost ratio, not by probability quality alone.
+
+![Decision-threshold tradeoffs](reports/figures/decision_threshold_tradeoffs.png)
+
+See [`docs/decision_thresholds.md`](docs/decision_thresholds.md) for the objective, validation-only selection rule, sensitivity table, and economic-data limitation.
+
 ## Feature-set conclusions
 
 The experiment compares cumulative feature groups:
@@ -112,6 +128,8 @@ See [`results/final_test_slice_metrics.csv`](results/final_test_slice_metrics.cs
 | [`results/rolling_origin_summary.json`](results/rolling_origin_summary.json) | R1 aggregates, day-block intervals, and acceptance record |
 | [`results/time_to_fill_metrics.csv`](results/time_to_fill_metrics.csv) | R2 horizon-specific discrimination and calibration |
 | [`results/time_to_fill_summary.json`](results/time_to_fill_summary.json) | R2 model design and probability-coherence audit |
+| [`results/decision_threshold_comparison.csv`](results/decision_threshold_comparison.csv) | R3 primary cost policy versus original F1 policy |
+| [`results/decision_threshold_summary.json`](results/decision_threshold_summary.json) | R3 objective, guardrails, and acceptance record |
 | [`results/brief_completion_summary.json`](results/brief_completion_summary.json) | Checklist against the project brief |
 | [`reports/figures/`](reports/figures/) | Calibration, discrimination, ablation, and explanation plots |
 | [`reports/`](reports/) | Technical report and presentation |
@@ -121,7 +139,7 @@ See [`results/final_test_slice_metrics.csv`](results/final_test_slice_metrics.cs
 - **Synthetic data:** the results describe the supplied generator, not live AAPL execution.
 - **Single symbol:** cross-sectional transfer is untested.
 - **Coarse event time:** R2 adds a three-interval hazard model, but not a continuous-time or competing-risk model.
-- **Threshold dependence:** ranking and calibration metrics do not guarantee a useful execution decision rule.
+- **Economic inputs:** R3 makes error-cost assumptions explicit, but the dataset cannot estimate real waiting cost, adverse selection, or implementation shortfall.
 - **Uncertainty:** the final holdout still uses row-level intervals; the R1 extension adds day-block intervals but has only six independent rolling test days.
 - **No economic backtest:** fill classification is not equivalent to realized implementation shortfall or trading profitability.
 

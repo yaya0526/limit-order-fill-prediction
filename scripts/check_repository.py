@@ -24,10 +24,12 @@ REQUIRED_PATHS = (
     "docs/limitations_and_roadmap.md",
     "docs/rolling_origin_robustness.md",
     "docs/time_to_fill_model.md",
+    "docs/decision_thresholds.md",
     "docs/releases/v0.1.0.md",
     "scripts/demo_results.py",
     "scripts/run_rolling_origin.py",
     "scripts/run_time_to_fill.py",
+    "scripts/run_decision_thresholds.py",
     "results/final_test_metrics.csv",
     "results/final_test_summary.json",
     "results/rolling_origin_predictions.csv",
@@ -37,9 +39,13 @@ REQUIRED_PATHS = (
     "results/time_to_fill_metrics.csv",
     "results/time_to_fill_risk_set_audit.csv",
     "results/time_to_fill_summary.json",
+    "results/decision_threshold_comparison.csv",
+    "results/decision_threshold_results.csv",
+    "results/decision_threshold_summary.json",
     "results/selected_model_policy.json",
     "reports/figures/rolling_origin_robustness.png",
     "reports/figures/time_to_fill_coherence.png",
+    "reports/figures/decision_threshold_tradeoffs.png",
 )
 
 EXPECTED_NOTEBOOKS = (
@@ -308,6 +314,69 @@ def validate_time_to_fill() -> list[str]:
     return errors
 
 
+def validate_decision_thresholds() -> list[str]:
+    errors: list[str] = []
+    path = ROOT / "results" / "decision_threshold_results.csv"
+    with path.open(newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle))
+    expected = {
+        (scenario, horizon, split)
+        for scenario in ("precision_first", "balanced", "fill_seeking")
+        for horizon in (5, 30, 60)
+        for split in ("validation", "test")
+    }
+    actual = {
+        (row["scenario"], int(row["horizon_seconds"]), row["split"])
+        for row in rows
+    }
+    if actual != expected:
+        errors.append(f"unexpected decision-threshold coverage: {actual}")
+    for row in rows:
+        for key in (
+            "selected_threshold",
+            "predicted_fill_rate",
+            "precision",
+            "recall",
+            "f1",
+        ):
+            value = float(row[key])
+            if not 0 <= value <= 1:
+                errors.append(
+                    f"decision {row['scenario']} {row['horizon_seconds']}s "
+                    f"{row['split']} {key} is outside [0, 1]: {value}"
+                )
+        if float(row["cost_per_order"]) < 0:
+            errors.append("decision cost per order must be non-negative")
+
+    summary_path = ROOT / "results" / "decision_threshold_summary.json"
+    try:
+        summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        errors.append(f"invalid JSON results/decision_threshold_summary.json: {exc}")
+        return errors
+    acceptance = summary.get("acceptance", {})
+    if acceptance.get("validation_only_threshold_selection") is not True:
+        errors.append("decision thresholds must be selected only on validation data")
+    if acceptance.get("f1_is_not_selection_objective") is not True:
+        errors.append("decision thresholds must not use F1 as the selection objective")
+    if acceptance.get("all_primary_test_policies_selective") is not True:
+        errors.append("primary held-out decision policies are not selective")
+    if acceptance.get("passed") is not True:
+        errors.append("decision-threshold acceptance record is not passing")
+    for row in summary.get("primary_test_results", []):
+        rate = float(row["predicted_fill_rate"])
+        if not 0 < rate <= 0.8:
+            errors.append(
+                f"primary {row['horizon_seconds']}s test positive rate is not selective: {rate}"
+            )
+    for row in summary.get("reproduction_audit", []):
+        if float(row["maximum_probability_delta"]) > 1e-10:
+            errors.append(
+                f"{row['horizon_seconds']}s reconstructed probabilities do not match"
+            )
+    return errors
+
+
 def validate_markdown_links() -> list[str]:
     errors: list[str] = []
     link_pattern = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
@@ -356,6 +425,7 @@ def validate_repository() -> list[str]:
         validate_json_artifacts,
         validate_rolling_origin,
         validate_time_to_fill,
+        validate_decision_thresholds,
         validate_markdown_links,
         validate_no_personal_paths,
     ):

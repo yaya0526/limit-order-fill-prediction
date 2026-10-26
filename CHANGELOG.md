@@ -11,11 +11,13 @@ All notable public repository changes are documented here.
 - row-level rolling prediction audit, machine-readable acceptance record, and stability figure;
 - reproducible R1 command, methodology note, and four unit tests;
 - censoring-aware discrete-time fill-hazard model with coherent 5/30/60-second probabilities;
-- R2 risk-set audit, validation/test metrics, comparison figure, and four unit tests.
+- R2 risk-set audit, validation/test metrics, comparison figure, and four unit tests;
+- validation-only cost-aware thresholds with 3:1, 1:1, and 1:3 sensitivity scenarios;
+- R3 selectivity guardrails, aggregate decision artifacts, tradeoff figure, and four unit tests.
 
 ### Changed
 
-- repository summary and roadmap now distinguish the completed R1–R2 milestones from the remaining decision-utility and independent-data work.
+- repository summary and roadmap now distinguish the completed R1–R3 milestones from independent simulation and real-data validation.
 
 ## [0.1.0] — 2026-10-26
 

@@ -9,7 +9,7 @@
 
 This repository turns order state, queue position, limit-order-book conditions, and recent order flow into calibrated fill-probability estimates. The workflow uses a chronological train/validation/test split, freezes model and threshold choices before opening the test set, and reports both predictive performance and failure modes.
 
-**Project status:** the core workflow, rolling-origin robustness audit, and coherent time-to-fill extension are complete, with automated raw-data-free validation and unit tests. Full notebook execution still requires the restricted source data.
+**Project status:** the core workflow and research milestones R1–R3 are complete, covering rolling robustness, coherent time to fill, and decision-aware thresholds. Automated raw-data-free validation and unit tests protect the published artifacts. Full notebook execution still requires the restricted source data.
 
 > [!IMPORTANT]
 > The dataset is deterministic synthetic teaching data. Results must not be interpreted as evidence about real AAPL or Nasdaq execution.
@@ -76,6 +76,20 @@ The model records zero monotonicity violations across 3,000 validation/test orde
 
 ![Time-to-fill coherence](reports/figures/time_to_fill_coherence.png)
 
+### Decision-aware operating points
+
+Validation thresholds now minimize a stated error cost instead of F1 alone. Under the primary scenario, a false positive carries three times the cost of a false negative.
+
+| Horizon | Original F1 positive rate | 3:1 cost positive rate | Original cost/order | 3:1 cost/order |
+|---:|---:|---:|---:|---:|
+| 5s | 6.4% | 0.8% | 0.253 | 0.134 |
+| 30s | 64.2% | 4.7% | 1.044 | 0.443 |
+| 60s | 96.4% | 20.4% | 0.999 | 0.533 |
+
+The new 60-second policy is selective, but high precision comes with lower recall. Balanced and fill-seeking scenarios show how the action rate changes when costs change. These are normalized sensitivity weights, not trading P&L. See the [`decision-threshold study`](docs/decision_thresholds.md).
+
+![Decision-threshold tradeoffs](reports/figures/decision_threshold_tradeoffs.png)
+
 ## Research design
 
 The prediction question is:
@@ -110,6 +124,9 @@ The design protects the time ordering of the problem:
                          │
                          ▼
      censoring-aware discrete-time fill-hazard model
+                         │
+                         ▼
+       validation-only cost-aware operating thresholds
 ```
 
 Each horizon has its own eligibility mask to handle right-censoring. Rows without enough observation time are excluded rather than labelled as non-fills.
@@ -129,9 +146,11 @@ Each horizon has its own eligibility mask to handle right-censoring. Rows withou
 | [`scripts/demo_results.py`](scripts/demo_results.py) | Standard-library demo of the committed held-out results |
 | [`scripts/run_rolling_origin.py`](scripts/run_rolling_origin.py) | Reproducible rolling-origin robustness experiment |
 | [`scripts/run_time_to_fill.py`](scripts/run_time_to_fill.py) | Reproducible censoring-aware time-to-fill experiment |
+| [`scripts/run_decision_thresholds.py`](scripts/run_decision_thresholds.py) | Reproducible cost-aware threshold sensitivity analysis |
 | [`docs/limitations_and_roadmap.md`](docs/limitations_and_roadmap.md) | Evidence boundaries and prioritized follow-up research |
 | [`docs/rolling_origin_robustness.md`](docs/rolling_origin_robustness.md) | R1 design, results, uncertainty, and limitations |
 | [`docs/time_to_fill_model.md`](docs/time_to_fill_model.md) | R2 hazard construction, coherence tests, and results |
+| [`docs/decision_thresholds.md`](docs/decision_thresholds.md) | R3 cost matrix, operating points, and sensitivity |
 | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | Automated Python 3.11 checks for pushes and pull requests |
 
 ## Full reproduction
@@ -185,6 +204,12 @@ Run the coherent time-to-fill extension with the same workbook:
 python scripts/run_time_to_fill.py --excel data/raw/AI_Order_Execution.xlsx
 ```
 
+Run the decision-aware threshold extension:
+
+```bash
+python scripts/run_decision_thresholds.py --excel data/raw/AI_Order_Execution.xlsx
+```
+
 ### 4. Run the raw-data-free checks
 
 ```bash
@@ -201,13 +226,14 @@ These commands validate the reusable code, notebook structure, result schemas, l
 - **Rolling-origin audit:** three additional chronological test windows measure temporal dispersion without touching the original final test period.
 - **Dependence-aware uncertainty:** the robustness extension resamples whole trading days rather than individual rows.
 - **Censoring-aware event time:** the hazard extension excludes within-interval censoring and guarantees non-decreasing cumulative probabilities.
+- **Explicit decision objective:** validation-only cost minimization replaces F1 as the sole threshold rule and reports sensitivity to cost ratios.
 - **Imbalance-aware metrics:** PR-AUC, Brier score, expected calibration error, and horizon-specific fill rates complement ROC-AUC.
 - **Ablation before complexity:** feature groups are added incrementally to identify whether LOB, order flow, and history features earn their complexity.
 - **Interpretability with limits:** SHAP and LIME describe model behaviour; they do not establish causal market mechanisms.
 
 ## What this project does—and does not—show
 
-This project demonstrates disciplined fixed-horizon and event-time probability workflows on synthetic data. It does not claim a profitable trading strategy, live execution readiness, causal effects, or transferability to real exchange data. The detailed [`limitations and research roadmap`](docs/limitations_and_roadmap.md) records the completed R1–R2 milestones and prioritizes decision-aware thresholds and independent-data validation.
+This project demonstrates disciplined probability and decision-policy workflows on synthetic data. It does not claim a profitable trading strategy, live execution readiness, causal effects, or transferability to real exchange data. The detailed [`limitations and research roadmap`](docs/limitations_and_roadmap.md) records the completed R1–R3 milestones and separates them from independent simulation and real-data validation.
 
 ## Reports and research artifacts
 
@@ -220,6 +246,8 @@ This project demonstrates disciplined fixed-horizon and event-time probability w
 - [`docs/rolling_origin_robustness.md`](docs/rolling_origin_robustness.md): robustness methodology and interpretation
 - [`results/time_to_fill_metrics.csv`](results/time_to_fill_metrics.csv): coherent hazard-model discrimination and calibration
 - [`docs/time_to_fill_model.md`](docs/time_to_fill_model.md): censoring, probability coherence, and R2 interpretation
+- [`results/decision_threshold_comparison.csv`](results/decision_threshold_comparison.csv): cost-aware versus F1 operating points
+- [`docs/decision_thresholds.md`](docs/decision_thresholds.md): decision objective, selectivity, and sensitivity
 - [`docs/feature_reference.md`](docs/feature_reference.md): feature definitions
 - [`docs/reproducibility.md`](docs/reproducibility.md): environment and verification instructions
 - [`docs/limitations_and_roadmap.md`](docs/limitations_and_roadmap.md): evidence boundary and research plan
