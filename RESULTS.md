@@ -51,6 +51,22 @@ The 30- and 60-second policies retain stable ranking performance, while the 5-se
 
 The full design, trading-day block intervals, and post-selection limitation are documented in [`docs/rolling_origin_robustness.md`](docs/rolling_origin_robustness.md). Machine-readable results are in [`results/rolling_origin_window_metrics.csv`](results/rolling_origin_window_metrics.csv) and [`results/rolling_origin_summary.json`](results/rolling_origin_summary.json).
 
+## Coherent time-to-fill model
+
+R2 fits conditional hazards over `(0, 5]`, `(5, 30]`, and `(30, 60]` seconds and combines them into one cumulative fill distribution. Orders cancelled or expired inside an interval are excluded from that interval risk set rather than mislabelled as non-fills.
+
+| Horizon | Hazard PR-AUC | Independent PR-AUC | Hazard Brier | Independent Brier | Hazard ECE |
+|---:|---:|---:|---:|---:|---:|
+| 5s | 0.162 | 0.170 | 0.103 | 0.102 | 0.018 |
+| 30s | 0.614 | 0.600 | 0.226 | 0.230 | 0.034 |
+| 60s | 0.815 | 0.805 | 0.203 | 0.205 | 0.043 |
+
+The coherent model records zero decreasing probability paths across all 3,000 validation/test orders. It slightly improves ranking and Brier score at 30 and 60 seconds, while the 5-second result is slightly weaker. This is a useful modelling tradeoff rather than a universal performance gain.
+
+![Time-to-fill coherence](reports/figures/time_to_fill_coherence.png)
+
+See [`docs/time_to_fill_model.md`](docs/time_to_fill_model.md) for the hazard equations, risk-set audit, acceptance decision, and competing-risk limitation.
+
 ## Feature-set conclusions
 
 The experiment compares cumulative feature groups:
@@ -94,6 +110,8 @@ See [`results/final_test_slice_metrics.csv`](results/final_test_slice_metrics.cs
 | [`results/final_test_slice_metrics.csv`](results/final_test_slice_metrics.csv) | Side, regime, and day slices |
 | [`results/rolling_origin_window_metrics.csv`](results/rolling_origin_window_metrics.csv) | R1 metrics for three non-overlapping test windows |
 | [`results/rolling_origin_summary.json`](results/rolling_origin_summary.json) | R1 aggregates, day-block intervals, and acceptance record |
+| [`results/time_to_fill_metrics.csv`](results/time_to_fill_metrics.csv) | R2 horizon-specific discrimination and calibration |
+| [`results/time_to_fill_summary.json`](results/time_to_fill_summary.json) | R2 model design and probability-coherence audit |
 | [`results/brief_completion_summary.json`](results/brief_completion_summary.json) | Checklist against the project brief |
 | [`reports/figures/`](reports/figures/) | Calibration, discrimination, ablation, and explanation plots |
 | [`reports/`](reports/) | Technical report and presentation |
@@ -102,7 +120,7 @@ See [`results/final_test_slice_metrics.csv`](results/final_test_slice_metrics.cs
 
 - **Synthetic data:** the results describe the supplied generator, not live AAPL execution.
 - **Single symbol:** cross-sectional transfer is untested.
-- **Fixed horizons:** this is not a full time-to-event or competing-risk model.
+- **Coarse event time:** R2 adds a three-interval hazard model, but not a continuous-time or competing-risk model.
 - **Threshold dependence:** ranking and calibration metrics do not guarantee a useful execution decision rule.
 - **Uncertainty:** the final holdout still uses row-level intervals; the R1 extension adds day-block intervals but has only six independent rolling test days.
 - **No economic backtest:** fill classification is not equivalent to realized implementation shortfall or trading profitability.
@@ -111,4 +129,4 @@ The full evidence boundary, follow-up questions, and measurable acceptance crite
 
 ## Reproducibility and provenance
 
-The study uses the supplied chronological 14/3/3-day split and random seed 42. Final policies were frozen before the one-time test evaluation. R1 then audits those specifications across three earlier rolling origins and records its post-selection limitation explicitly. Raw teaching data are not redistributed, but derived outputs and committed notebook results are included for auditability. See [`data/README.md`](data/README.md) for the local input contract.
+The study uses the supplied chronological 14/3/3-day split and random seed 42. Final policies were frozen before the one-time test evaluation. R1 audits those specifications across three earlier rolling origins. R2 fixes a common logistic hazard specification, fits it on the training period, and evaluates coherent probabilities on validation and test periods. Raw teaching data are not redistributed, but derived outputs and committed notebook results are included for auditability. See [`data/README.md`](data/README.md) for the local input contract.

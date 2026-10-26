@@ -1,0 +1,220 @@
+{
+  "status": "complete",
+  "random_seed": 42,
+  "model": {
+    "type": "discrete_time_logistic_hazard",
+    "feature_set": "C_order_lob_flow",
+    "parameters": {
+      "C": 1.0
+    },
+    "intervals_seconds": [
+      [
+        0,
+        5
+      ],
+      [
+        5,
+        30
+      ],
+      [
+        30,
+        60
+      ]
+    ],
+    "calibration": "forward-only sigmoid calibration per interval",
+    "censoring": "orders censored inside an interval are excluded from that interval risk set"
+  },
+  "acceptance": {
+    "monotone_by_construction": true,
+    "validation_monotonicity_violations": 0,
+    "test_monotonicity_violations": 0,
+    "time_dependent_discrimination_reported": true,
+    "time_dependent_calibration_reported": true,
+    "passed": true
+  },
+  "monotonicity": {
+    "validation": {
+      "rows": 1500,
+      "violations": 0,
+      "violation_rate": 0.0,
+      "minimum_probability_increment": 0.01847877669885656
+    },
+    "test": {
+      "rows": 1500,
+      "violations": 0,
+      "violation_rate": 0.0,
+      "minimum_probability_increment": 0.026433085143027002
+    }
+  },
+  "risk_set_audit": [
+    {
+      "interval_start_s": 0,
+      "interval_end_s": 5,
+      "training_risk_rows": 6807,
+      "training_events": 711,
+      "training_event_rate": 0.10445130013221683,
+      "calibration_folds": 4,
+      "calibration_oof_rows": 3882,
+      "calibration_oof_event_rate": 0.1035548686244204
+    },
+    {
+      "interval_start_s": 5,
+      "interval_end_s": 30,
+      "training_risk_rows": 5462,
+      "training_events": 1870,
+      "training_event_rate": 0.34236543390699375,
+      "calibration_folds": 4,
+      "calibration_oof_rows": 3123,
+      "calibration_oof_event_rate": 0.34390009606147937
+    },
+    {
+      "interval_start_s": 30,
+      "interval_end_s": 60,
+      "training_risk_rows": 3196,
+      "training_events": 1076,
+      "training_event_rate": 0.33667083854818525,
+      "calibration_folds": 4,
+      "calibration_oof_rows": 1828,
+      "calibration_oof_event_rate": 0.3440919037199125
+    }
+  ],
+  "metrics": [
+    {
+      "split": "test",
+      "model_type": "discrete_time_hazard",
+      "horizon_seconds": 5,
+      "threshold": 0.5,
+      "eligible_rows": 1460,
+      "true_fill_rate": 0.1178082191780822,
+      "predicted_fill_rate": 0.0,
+      "mean_predicted_probability": 0.10457094801009557,
+      "roc_auc": 0.6033782319803552,
+      "pr_auc": 0.1616865961166065,
+      "brier_score": 0.10301007364680743,
+      "ece_10": 0.017725798090666933,
+      "accuracy": 0.8821917808219178,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "tn": 1288,
+      "fp": 0,
+      "fn": 172,
+      "tp": 0
+    },
+    {
+      "split": "test",
+      "model_type": "discrete_time_hazard",
+      "horizon_seconds": 30,
+      "threshold": 0.5,
+      "eligible_rows": 1311,
+      "true_fill_rate": 0.444698703279939,
+      "predicted_fill_rate": 0.2448512585812357,
+      "mean_predicted_probability": 0.41053053231133374,
+      "roc_auc": 0.6715006691421785,
+      "pr_auc": 0.6139821780921811,
+      "brier_score": 0.22547515118269834,
+      "ece_10": 0.03416817096860524,
+      "accuracy": 0.6216628527841342,
+      "precision": 0.6355140186915887,
+      "recall": 0.34991423670668953,
+      "f1": 0.45132743362831856,
+      "tn": 611,
+      "fp": 117,
+      "fn": 379,
+      "tp": 204
+    },
+    {
+      "split": "test",
+      "model_type": "discrete_time_hazard",
+      "horizon_seconds": 60,
+      "threshold": 0.5,
+      "eligible_rows": 1234,
+      "true_fill_rate": 0.6434359805510534,
+      "predicted_fill_rate": 0.8549432739059968,
+      "mean_predicted_probability": 0.6293149075909574,
+      "roc_auc": 0.7036638424547745,
+      "pr_auc": 0.8152598285330028,
+      "brier_score": 0.20275778734788846,
+      "ece_10": 0.043375874857213,
+      "accuracy": 0.679902755267423,
+      "precision": 0.6890995260663507,
+      "recall": 0.9156171284634761,
+      "f1": 0.7863710113574905,
+      "tn": 112,
+      "fp": 328,
+      "fn": 67,
+      "tp": 727
+    },
+    {
+      "split": "validation",
+      "model_type": "discrete_time_hazard",
+      "horizon_seconds": 5,
+      "threshold": 0.5,
+      "eligible_rows": 1455,
+      "true_fill_rate": 0.10240549828178694,
+      "predicted_fill_rate": 0.0,
+      "mean_predicted_probability": 0.1051208031525343,
+      "roc_auc": 0.6679188464186974,
+      "pr_auc": 0.23218679508713733,
+      "brier_score": 0.0876060329009591,
+      "ece_10": 0.009282388146336093,
+      "accuracy": 0.8975945017182131,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "tn": 1306,
+      "fp": 0,
+      "fn": 149,
+      "tp": 0
+    },
+    {
+      "split": "validation",
+      "model_type": "discrete_time_hazard",
+      "horizon_seconds": 30,
+      "threshold": 0.5,
+      "eligible_rows": 1324,
+      "true_fill_rate": 0.3957703927492447,
+      "predicted_fill_rate": 0.25075528700906347,
+      "mean_predicted_probability": 0.4131923982312254,
+      "roc_auc": 0.6804794847328244,
+      "pr_auc": 0.5997099186040877,
+      "brier_score": 0.21505850490888676,
+      "ece_10": 0.038327695618908225,
+      "accuracy": 0.6691842900302115,
+      "precision": 0.6295180722891566,
+      "recall": 0.3988549618320611,
+      "f1": 0.4883177570093458,
+      "tn": 677,
+      "fp": 123,
+      "fn": 315,
+      "tp": 209
+    },
+    {
+      "split": "validation",
+      "model_type": "discrete_time_hazard",
+      "horizon_seconds": 60,
+      "threshold": 0.5,
+      "eligible_rows": 1241,
+      "true_fill_rate": 0.6140209508460919,
+      "predicted_fill_rate": 0.8444802578565673,
+      "mean_predicted_probability": 0.6314463828765313,
+      "roc_auc": 0.6939517476808092,
+      "pr_auc": 0.7878293769222061,
+      "brier_score": 0.21258196405828633,
+      "ece_10": 0.040414601054046095,
+      "accuracy": 0.645447219983884,
+      "precision": 0.6536259541984732,
+      "recall": 0.8989501312335958,
+      "f1": 0.7569060773480663,
+      "tn": 116,
+      "fp": 363,
+      "fn": 77,
+      "tp": 685
+    }
+  ],
+  "limitations": [
+    "This post-hoc extension uses the same synthetic sequence as the fixed-horizon study.",
+    "Fixed interval boundaries provide a coarse event-time distribution rather than continuous-time hazards.",
+    "Cancellation is treated as independent right-censoring rather than a competing event."
+  ]
+}

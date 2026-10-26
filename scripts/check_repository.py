@@ -23,17 +23,23 @@ REQUIRED_PATHS = (
     "docs/feature_reference.md",
     "docs/limitations_and_roadmap.md",
     "docs/rolling_origin_robustness.md",
+    "docs/time_to_fill_model.md",
     "docs/releases/v0.1.0.md",
     "scripts/demo_results.py",
     "scripts/run_rolling_origin.py",
+    "scripts/run_time_to_fill.py",
     "results/final_test_metrics.csv",
     "results/final_test_summary.json",
     "results/rolling_origin_predictions.csv",
     "results/rolling_origin_summary.csv",
     "results/rolling_origin_summary.json",
     "results/rolling_origin_window_metrics.csv",
+    "results/time_to_fill_metrics.csv",
+    "results/time_to_fill_risk_set_audit.csv",
+    "results/time_to_fill_summary.json",
     "results/selected_model_policy.json",
     "reports/figures/rolling_origin_robustness.png",
+    "reports/figures/time_to_fill_coherence.png",
 )
 
 EXPECTED_NOTEBOOKS = (
@@ -249,6 +255,59 @@ def validate_rolling_origin() -> list[str]:
     return errors
 
 
+def validate_time_to_fill() -> list[str]:
+    errors: list[str] = []
+    metrics_path = ROOT / "results" / "time_to_fill_metrics.csv"
+    with metrics_path.open(newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle))
+    hazard_pairs = {
+        (row["split"], int(row["horizon_seconds"]))
+        for row in rows
+        if row["model_type"] == "discrete_time_hazard"
+    }
+    expected_pairs = {
+        (split, horizon)
+        for split in ("validation", "test")
+        for horizon in (5, 30, 60)
+    }
+    if hazard_pairs != expected_pairs:
+        errors.append(f"unexpected time-to-fill split/horizon coverage: {hazard_pairs}")
+    for row in rows:
+        for key in (
+            "true_fill_rate",
+            "mean_predicted_probability",
+            "roc_auc",
+            "pr_auc",
+            "brier_score",
+            "ece_10",
+        ):
+            value = float(row[key])
+            if not 0 <= value <= 1:
+                errors.append(
+                    f"time-to-fill {row['split']} {row['model_type']} "
+                    f"{row['horizon_seconds']}s {key} is outside [0, 1]: {value}"
+                )
+
+    summary_path = ROOT / "results" / "time_to_fill_summary.json"
+    try:
+        summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        errors.append(f"invalid JSON results/time_to_fill_summary.json: {exc}")
+        return errors
+    acceptance = summary.get("acceptance", {})
+    if acceptance.get("validation_monotonicity_violations") != 0:
+        errors.append("time-to-fill validation probabilities must have zero violations")
+    if acceptance.get("test_monotonicity_violations") != 0:
+        errors.append("time-to-fill test probabilities must have zero violations")
+    if acceptance.get("time_dependent_discrimination_reported") is not True:
+        errors.append("time-to-fill discrimination metrics are not recorded")
+    if acceptance.get("time_dependent_calibration_reported") is not True:
+        errors.append("time-to-fill calibration metrics are not recorded")
+    if acceptance.get("passed") is not True:
+        errors.append("time-to-fill acceptance record is not passing")
+    return errors
+
+
 def validate_markdown_links() -> list[str]:
     errors: list[str] = []
     link_pattern = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
@@ -296,6 +355,7 @@ def validate_repository() -> list[str]:
         validate_metrics,
         validate_json_artifacts,
         validate_rolling_origin,
+        validate_time_to_fill,
         validate_markdown_links,
         validate_no_personal_paths,
     ):

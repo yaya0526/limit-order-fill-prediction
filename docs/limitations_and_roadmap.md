@@ -4,7 +4,7 @@ This document separates what the repository currently demonstrates from what a p
 
 ## Current evidence boundary
 
-The repository demonstrates a disciplined modelling workflow on deterministic synthetic teaching data. It shows how to construct fixed-horizon fill labels, preserve chronology, compare cumulative feature groups, calibrate probabilities, freeze a validation-selected policy, and evaluate it once on a held-out period.
+The repository demonstrates a disciplined modelling workflow on deterministic synthetic teaching data. It shows how to construct fixed-horizon fill labels, preserve chronology, compare cumulative feature groups, calibrate probabilities, freeze a validation-selected policy, evaluate it on a held-out period, audit it across rolling origins, and construct a coherent discrete-time fill distribution.
 
 It does **not** demonstrate live AAPL execution quality, a profitable trading strategy, causal market mechanisms, or portability to another symbol, venue, or period.
 
@@ -22,11 +22,11 @@ The 14/3/3-day split protects time order and keeps the test period untouched dur
 
 **Consequence:** short-run temporal dispersion is measured more clearly, but long-run regime transfer remains untested.
 
-### 3. Fixed-horizon binary targets
+### 3. Coarse event-time and censoring assumptions
 
-Separate 5-, 30-, and 60-second labels are easy to interpret, but they discard the exact time-to-fill and treat each horizon as a different classification problem. Eligibility masks handle end-of-sample right-censoring; they do not model censoring directly.
+R2 replaces disconnected horizon probabilities with a three-interval hazard model and explicit censoring risk sets. The interval grid is still coarse, and cancellation/expiry is treated as independent right-censoring rather than a competing event.
 
-**Consequence:** the three probabilities are not guaranteed to be mutually coherent, and the workflow cannot estimate a full fill-time distribution.
+**Consequence:** 5/30/60-second probabilities are coherent, but the workflow does not estimate continuous-time hazards or cancellation probabilities.
 
 ### 4. Probability quality is not decision utility
 
@@ -64,13 +64,15 @@ SHAP, LIME, permutation importance, and response profiles explain how fitted mod
 
 **Completion:** three expanding-origin windows now report per-window metrics, mean, standard deviation, range, and pooled trading-day block intervals. The original final test period remains untouched. See [`rolling_origin_robustness.md`](rolling_origin_robustness.md).
 
-### R2 — Time-to-fill modelling
+### R2 — Time-to-fill modelling — complete
 
 **Question:** can a discrete-time hazard or survival model produce coherent probabilities across horizons while handling censoring directly?
 
 **Method:** estimate a fill-time survival curve and compare its 5-, 30-, and 60-second cumulative probabilities with the current classifiers.
 
 **Acceptance criterion:** horizon probabilities are monotone by construction and are evaluated with time-dependent discrimination and calibration metrics.
+
+**Completion:** the discrete-time logistic hazard model has zero monotonicity violations on validation and test data. Horizon-specific ROC-AUC, PR-AUC, Brier score, and ECE are reported with a censoring-aware risk-set audit. See [`time_to_fill_model.md`](time_to_fill_model.md).
 
 ### R3 — Decision-aware thresholds
 
@@ -99,9 +101,9 @@ SHAP, LIME, permutation importance, and response profiles explain how fitted mod
 ## Recommended execution order
 
 1. R1 is complete; retain it as the temporal-stability baseline.
-2. Use R2 to replace disconnected horizon classifiers with a coherent event-time formulation.
+2. R2 is complete; use it as the coherent probability baseline.
 3. Add R3 before describing any result as operationally useful.
 4. Use R4 as a public robustness benchmark.
 5. Attempt R5 only with properly licensed data and documented exchange semantics.
 
-The next research milestone is **coherence before another classifier**: use R2 to model time to fill directly, then use R3 to connect thresholds to an explicit decision objective.
+The next research milestone is **decision utility before more model complexity**: use R3 to replace generic F1 thresholds with an explicit cost objective and sensitivity analysis.
