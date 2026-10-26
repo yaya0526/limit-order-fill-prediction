@@ -9,7 +9,7 @@
 
 This repository turns order state, queue position, limit-order-book conditions, and recent order flow into calibrated fill-probability estimates. The workflow uses a chronological train/validation/test split, freezes model and threshold choices before opening the test set, and reports both predictive performance and failure modes.
 
-**Project status:** the research workflow is complete, with automated raw-data-free validation and unit tests. Full notebook execution still requires the restricted source data.
+**Project status:** the core research workflow and the first rolling-origin robustness extension are complete, with automated raw-data-free validation and unit tests. Full notebook execution still requires the restricted source data.
 
 > [!IMPORTANT]
 > The dataset is deterministic synthetic teaching data. Results must not be interpreted as evidence about real AAPL or Nasdaq execution.
@@ -48,6 +48,20 @@ Full tables, caveats, and artifact links are in [`RESULTS.md`](RESULTS.md).
 
 ![Global SHAP importance](reports/figures/brief_shap_global_importance.png)
 
+### Rolling-origin robustness
+
+The selected model specifications were also refitted and evaluated across three non-overlapping chronological test windows, while the original final test period remained untouched.
+
+| Horizon | PR-AUC, mean ± SD | Brier, mean ± SD | F1, mean ± SD | Pooled predicted fill rate |
+|---:|---:|---:|---:|---:|
+| 5s | 0.208 ± 0.021 | 0.093 ± 0.005 | 0.241 ± 0.027 | 43.3% |
+| 30s | 0.616 ± 0.002 | 0.221 ± 0.004 | 0.617 ± 0.016 | 73.4% |
+| 60s | 0.792 ± 0.004 | 0.212 ± 0.002 | 0.779 ± 0.017 | 94.1% |
+
+The 30- and 60-second ranking results are stable across windows. The 60-second policy remains weakly selective in every period, while the 5-second threshold is visibly unstable. See the [`rolling-origin study`](docs/rolling_origin_robustness.md) for the design, day-block uncertainty intervals, and limitations.
+
+![Rolling-origin robustness](reports/figures/rolling_origin_robustness.png)
+
 ## Research design
 
 The prediction question is:
@@ -76,6 +90,9 @@ The design protects the time ordering of the problem:
                          │
                          ▼
        ablation, slice analysis, SHAP and LIME explanations
+                         │
+                         ▼
+      three-window rolling-origin robustness audit
 ```
 
 Each horizon has its own eligibility mask to handle right-censoring. Rows without enough observation time are excluded rather than labelled as non-fills.
@@ -93,7 +110,9 @@ Each horizon has its own eligibility mask to handle right-censoring. Rows withou
 | [`tests/`](tests/) | Raw-data-free unit and repository-contract tests |
 | [`scripts/check_repository.py`](scripts/check_repository.py) | One-command validation of published artifacts and links |
 | [`scripts/demo_results.py`](scripts/demo_results.py) | Standard-library demo of the committed held-out results |
+| [`scripts/run_rolling_origin.py`](scripts/run_rolling_origin.py) | Reproducible rolling-origin robustness experiment |
 | [`docs/limitations_and_roadmap.md`](docs/limitations_and_roadmap.md) | Evidence boundaries and prioritized follow-up research |
+| [`docs/rolling_origin_robustness.md`](docs/rolling_origin_robustness.md) | R1 design, results, uncertainty, and limitations |
 | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | Automated Python 3.11 checks for pushes and pull requests |
 
 ## Full reproduction
@@ -135,6 +154,12 @@ jupyter lab
 
 Run the numbered notebooks in ascending order. Existing committed outputs let reviewers inspect the completed study without access to the restricted raw files; re-running the full pipeline requires both source files above.
 
+The R1 robustness extension uses only the Excel workbook because the frozen policies use feature sets B and C:
+
+```bash
+python scripts/run_rolling_origin.py --excel data/raw/AI_Order_Execution.xlsx
+```
+
 ### 4. Run the raw-data-free checks
 
 ```bash
@@ -148,13 +173,15 @@ These commands validate the reusable code, notebook structure, result schemas, l
 
 - **Chronological holdout:** train on 14 days, validate on 3, test on the final 3.
 - **No test-set tuning:** model, calibration method, and classification threshold are frozen first.
+- **Rolling-origin audit:** three additional chronological test windows measure temporal dispersion without touching the original final test period.
+- **Dependence-aware uncertainty:** the robustness extension resamples whole trading days rather than individual rows.
 - **Imbalance-aware metrics:** PR-AUC, Brier score, expected calibration error, and horizon-specific fill rates complement ROC-AUC.
 - **Ablation before complexity:** feature groups are added incrementally to identify whether LOB, order flow, and history features earn their complexity.
 - **Interpretability with limits:** SHAP and LIME describe model behaviour; they do not establish causal market mechanisms.
 
 ## What this project does—and does not—show
 
-This project demonstrates a disciplined fixed-horizon probability-modelling workflow on synthetic data. It does not claim a profitable trading strategy, live execution readiness, causal effects, or transferability to real exchange data. The detailed [`limitations and research roadmap`](docs/limitations_and_roadmap.md) prioritizes rolling-origin robustness, dependence-aware uncertainty, time-to-fill modelling, decision-aware thresholds, and independent-data validation.
+This project demonstrates a disciplined fixed-horizon probability-modelling workflow on synthetic data. It does not claim a profitable trading strategy, live execution readiness, causal effects, or transferability to real exchange data. The detailed [`limitations and research roadmap`](docs/limitations_and_roadmap.md) records the completed rolling-origin milestone and prioritizes time-to-fill modelling, decision-aware thresholds, and independent-data validation.
 
 ## Reports and research artifacts
 
@@ -163,6 +190,8 @@ This project demonstrates a disciplined fixed-horizon probability-modelling work
 - [`results/final_test_metrics.csv`](results/final_test_metrics.csv): held-out metrics
 - [`results/final_test_summary.json`](results/final_test_summary.json): final policies and evaluation summary
 - [`results/validation_test_comparison.csv`](results/validation_test_comparison.csv): generalization deltas
+- [`results/rolling_origin_summary.csv`](results/rolling_origin_summary.csv): rolling-window means, dispersion, pooled metrics, and block intervals
+- [`docs/rolling_origin_robustness.md`](docs/rolling_origin_robustness.md): robustness methodology and interpretation
 - [`docs/feature_reference.md`](docs/feature_reference.md): feature definitions
 - [`docs/reproducibility.md`](docs/reproducibility.md): environment and verification instructions
 - [`docs/limitations_and_roadmap.md`](docs/limitations_and_roadmap.md): evidence boundary and research plan

@@ -1,0 +1,373 @@
+{
+  "status": "complete",
+  "random_seed": 42,
+  "bootstrap_resamples": 1000,
+  "design": {
+    "policy": "Frozen feature set, model family, and hyperparameters from v0.1.0.",
+    "calibration": "Forward-only sigmoid calibration fitted from training-period out-of-fold predictions.",
+    "threshold": "F1-maximizing threshold selected on each window's validation period.",
+    "uncertainty": "Trading-day block bootstrap over the six pooled rolling test days.",
+    "original_final_test_untouched": true,
+    "original_final_test_days": [
+      "2022-09-29",
+      "2022-09-30",
+      "2022-10-03"
+    ],
+    "limitation": "This is a post-selection robustness audit: v0.1.0 hyperparameters were fixed before the rolling analysis, but were originally chosen using the broader development period."
+  },
+  "acceptance": {
+    "required_non_overlapping_test_windows": 3,
+    "observed_non_overlapping_test_windows": 3,
+    "dispersion_reported_with_mean": true,
+    "passed": true
+  },
+  "windows": [
+    {
+      "window_id": "W1",
+      "train_start": "2022-09-06",
+      "train_end": "2022-09-15",
+      "validation_start": "2022-09-16",
+      "validation_end": "2022-09-19",
+      "test_start": "2022-09-20",
+      "test_end": "2022-09-21"
+    },
+    {
+      "window_id": "W2",
+      "train_start": "2022-09-06",
+      "train_end": "2022-09-19",
+      "validation_start": "2022-09-20",
+      "validation_end": "2022-09-21",
+      "test_start": "2022-09-22",
+      "test_end": "2022-09-23"
+    },
+    {
+      "window_id": "W3",
+      "train_start": "2022-09-06",
+      "train_end": "2022-09-21",
+      "validation_start": "2022-09-22",
+      "validation_end": "2022-09-23",
+      "test_start": "2022-09-26",
+      "test_end": "2022-09-27"
+    }
+  ],
+  "horizons": {
+    "5": {
+      "candidate": "B_logistic",
+      "feature_set": "B_order_lob",
+      "model": "logistic_regression",
+      "aggregate_metrics": {
+        "true_fill_rate": {
+          "window_mean": 0.10707271149800546,
+          "window_std": 0.005431373768977517,
+          "window_min": 0.10082304526748971,
+          "window_max": 0.11065149948293691,
+          "pooled": 0.10706932052161977,
+          "day_block_ci_low": 0.09430727023319616,
+          "day_block_ci_high": 0.12071330589849108
+        },
+        "predicted_fill_rate": {
+          "window_mean": 0.43336591861927953,
+          "window_std": 0.10600024555367335,
+          "window_min": 0.36608066184074456,
+          "window_max": 0.5555555555555556,
+          "pooled": 0.4334248455730954,
+          "day_block_ci_low": 0.3640485763381049,
+          "day_block_ci_high": 0.5039727551149827
+        },
+        "mean_predicted_probability": {
+          "window_mean": 0.09479850106880465,
+          "window_std": 0.007424145998070822,
+          "window_min": 0.08674108853349527,
+          "window_max": 0.10136226576331078,
+          "pooled": 0.09478764297792958,
+          "day_block_ci_low": 0.08962224322514648,
+          "day_block_ci_high": 0.10000752111484362
+        },
+        "roc_auc": {
+          "window_mean": 0.6555577716912819,
+          "window_std": 0.007825876970003942,
+          "window_min": 0.649371876897212,
+          "window_max": 0.6643555748750272,
+          "pooled": 0.6511608427442401,
+          "day_block_ci_low": 0.6327836026364826,
+          "day_block_ci_high": 0.6762114573782633
+        },
+        "pr_auc": {
+          "window_mean": 0.2075030954904703,
+          "window_std": 0.021231059877369632,
+          "window_min": 0.1869832792279703,
+          "window_max": 0.22938026487088678,
+          "pooled": 0.19602949222721994,
+          "day_block_ci_low": 0.17212412501140206,
+          "day_block_ci_high": 0.22864613025351355
+        },
+        "brier_score": {
+          "window_mean": 0.09263080257071236,
+          "window_std": 0.00517134872499033,
+          "window_min": 0.08665998719180636,
+          "window_max": 0.09568599864547223,
+          "pooled": 0.09262856196588691,
+          "day_block_ci_low": 0.0828335433740995,
+          "day_block_ci_high": 0.10332671829693645
+        },
+        "ece_10": {
+          "window_mean": 0.017469400922805873,
+          "window_std": 0.004905612889714519,
+          "window_min": 0.013652308665851322,
+          "window_max": 0.02300250121009447,
+          "pooled": 0.012308007914147517,
+          "day_block_ci_low": 0.00490891669228596,
+          "day_block_ci_high": 0.02944033078676654
+        },
+        "accuracy": {
+          "window_mean": 0.587905418212209,
+          "window_std": 0.09237720577991468,
+          "window_min": 0.48148148148148145,
+          "window_max": 0.6473629782833505,
+          "pooled": 0.5878517501715854,
+          "day_block_ci_low": 0.527392280871126,
+          "day_block_ci_high": 0.6497792110955891
+        },
+        "precision": {
+          "window_mean": 0.152055741838021,
+          "window_std": 0.02447647802687694,
+          "window_min": 0.12407407407407407,
+          "window_max": 0.1694915254237288,
+          "pooled": 0.14806017418844022,
+          "day_block_ci_low": 0.12472487160674982,
+          "day_block_ci_high": 0.18189509306260576
+        },
+        "recall": {
+          "window_mean": 0.6017229321635196,
+          "window_std": 0.07097124708997023,
+          "window_min": 0.5607476635514018,
+          "window_max": 0.6836734693877551,
+          "pooled": 0.5993589743589743,
+          "day_block_ci_low": 0.5534591194968553,
+          "day_block_ci_high": 0.6470588235294118
+        },
+        "f1": {
+          "window_mean": 0.24081195864469726,
+          "window_std": 0.026970468506065246,
+          "window_min": 0.21003134796238246,
+          "window_max": 0.2603036876355748,
+          "pooled": 0.23746031746031745,
+          "day_block_ci_low": 0.20718030938484752,
+          "day_block_ci_high": 0.2784503884198307
+        }
+      }
+    },
+    "30": {
+      "candidate": "C_random_forest",
+      "feature_set": "C_order_lob_flow",
+      "model": "random_forest",
+      "aggregate_metrics": {
+        "true_fill_rate": {
+          "window_mean": 0.4233104629818336,
+          "window_std": 0.006489379322485063,
+          "window_min": 0.41839080459770117,
+          "window_max": 0.4306651634723788,
+          "pooled": 0.4233383685800604,
+          "day_block_ci_low": 0.403268719118206,
+          "day_block_ci_high": 0.4458224394248016
+        },
+        "predicted_fill_rate": {
+          "window_mean": 0.7345996301004142,
+          "window_std": 0.05937010761149143,
+          "window_min": 0.6734006734006734,
+          "window_max": 0.7919540229885057,
+          "pooled": 0.7341389728096677,
+          "day_block_ci_low": 0.6920450879548699,
+          "day_block_ci_high": 0.7770992366412214
+        },
+        "mean_predicted_probability": {
+          "window_mean": 0.39700041484308507,
+          "window_std": 0.016308642522457343,
+          "window_min": 0.38192990640735475,
+          "window_max": 0.41431481281394517,
+          "pooled": 0.39704097515803244,
+          "day_block_ci_low": 0.3858951313868607,
+          "day_block_ci_high": 0.4082873386634022
+        },
+        "roc_auc": {
+          "window_mean": 0.6791599727052441,
+          "window_std": 0.006450987646396133,
+          "window_min": 0.6740759939868332,
+          "window_max": 0.6864168440255397,
+          "pooled": 0.6758197815473719,
+          "day_block_ci_low": 0.6585416954321424,
+          "day_block_ci_high": 0.6918327962568749
+        },
+        "pr_auc": {
+          "window_mean": 0.6161506676118961,
+          "window_std": 0.002119853158409806,
+          "window_min": 0.6137058397302377,
+          "window_max": 0.6174774361645994,
+          "pooled": 0.6127998943811652,
+          "day_block_ci_low": 0.5733837048946868,
+          "day_block_ci_high": 0.6491996485250533
+        },
+        "brier_score": {
+          "window_mean": 0.22063803023793815,
+          "window_std": 0.004453033981054218,
+          "window_min": 0.21695986777283902,
+          "window_max": 0.22558883965538362,
+          "pooled": 0.22065972139129822,
+          "day_block_ci_low": 0.21747920802739332,
+          "day_block_ci_high": 0.2238289677065716
+        },
+        "ece_10": {
+          "window_mean": 0.04707787536854518,
+          "window_std": 0.01918466709793486,
+          "window_min": 0.028637699437447334,
+          "window_max": 0.06692911498296095,
+          "pooled": 0.031846935007504365,
+          "day_block_ci_low": 0.018284587011484117,
+          "day_block_ci_high": 0.05969077548898341
+        },
+        "accuracy": {
+          "window_mean": 0.556932679377789,
+          "window_std": 0.011725474809719416,
+          "window_min": 0.5436781609195402,
+          "window_max": 0.5659526493799324,
+          "pooled": 0.55702416918429,
+          "day_block_ci_low": 0.5360942249240122,
+          "day_block_ci_high": 0.5808023997000374
+        },
+        "precision": {
+          "window_mean": 0.48680961332264805,
+          "window_std": 0.010829544606050184,
+          "window_min": 0.4760522496371553,
+          "window_max": 0.49770992366412214,
+          "pooled": 0.48662551440329216,
+          "day_block_ci_low": 0.4585721730067744,
+          "day_block_ci_high": 0.516261479708311
+        },
+        "recall": {
+          "window_mean": 0.8443895697089414,
+          "window_std": 0.0617118008363552,
+          "window_min": 0.7786666666666666,
+          "window_max": 0.9010989010989011,
+          "pooled": 0.8438893844781445,
+          "day_block_ci_low": 0.7979675790159662,
+          "day_block_ci_high": 0.8857677902621723
+        },
+        "f1": {
+          "window_mean": 0.6168976852958424,
+          "window_std": 0.015786500731782428,
+          "window_min": 0.598974358974359,
+          "window_max": 0.6287367405978785,
+          "pooled": 0.6172920065252855,
+          "day_block_ci_low": 0.5904059040590406,
+          "day_block_ci_high": 0.6445342958080444
+        }
+      }
+    },
+    "60": {
+      "candidate": "C_random_forest",
+      "feature_set": "C_order_lob_flow",
+      "model": "random_forest",
+      "aggregate_metrics": {
+        "true_fill_rate": {
+          "window_mean": 0.6336001081774614,
+          "window_std": 0.017757808491142096,
+          "window_min": 0.6130952380952381,
+          "window_max": 0.6439024390243903,
+          "pooled": 0.6334805299076676,
+          "day_block_ci_low": 0.6147410358565737,
+          "day_block_ci_high": 0.6529406550632759
+        },
+        "predicted_fill_rate": {
+          "window_mean": 0.941473337889645,
+          "window_std": 0.017805139641314586,
+          "window_min": 0.924187725631769,
+          "window_max": 0.9597560975609756,
+          "pooled": 0.9413890004014452,
+          "day_block_ci_low": 0.929656274980016,
+          "day_block_ci_high": 0.9534799046000738
+        },
+        "mean_predicted_probability": {
+          "window_mean": 0.6041142164470727,
+          "window_std": 0.04376980919495466,
+          "window_min": 0.5578479641836653,
+          "window_max": 0.644864709666023,
+          "pooled": 0.6042370912320914,
+          "day_block_ci_low": 0.57470379243408,
+          "day_block_ci_high": 0.6333163192609319
+        },
+        "roc_auc": {
+          "window_mean": 0.6842374680534743,
+          "window_std": 0.012770697320144778,
+          "window_min": 0.6707658779576589,
+          "window_max": 0.6961672890216579,
+          "pooled": 0.6741192214415908,
+          "day_block_ci_low": 0.662249610426406,
+          "day_block_ci_high": 0.6898474739579584
+        },
+        "pr_auc": {
+          "window_mean": 0.7921990686948975,
+          "window_std": 0.0037075123250094513,
+          "window_min": 0.7894811130130783,
+          "window_max": 0.7964225160021913,
+          "pooled": 0.7857395406288163,
+          "day_block_ci_low": 0.7685380235193224,
+          "day_block_ci_high": 0.8053728637730863
+        },
+        "brier_score": {
+          "window_mean": 0.21220034710762115,
+          "window_std": 0.00203809154116738,
+          "window_min": 0.21051403297095767,
+          "window_max": 0.21446514956230797,
+          "pooled": 0.21220570361530522,
+          "day_block_ci_low": 0.2083747937474924,
+          "day_block_ci_high": 0.21651148568206813
+        },
+        "ece_10": {
+          "window_mean": 0.0612381639437396,
+          "window_std": 0.023886538140233355,
+          "window_min": 0.0471582274285814,
+          "window_max": 0.08881792881963162,
+          "pooled": 0.03130408029010846,
+          "day_block_ci_low": 0.01995386976706946,
+          "day_block_ci_high": 0.0731074279510774
+        },
+        "accuracy": {
+          "window_mean": 0.6528723981154201,
+          "window_std": 0.022841271261059157,
+          "window_min": 0.6273809523809524,
+          "window_max": 0.6714801444043321,
+          "pooled": 0.6527498996386993,
+          "day_block_ci_low": 0.635001970831691,
+          "day_block_ci_high": 0.6697586295563533
+        },
+        "precision": {
+          "window_mean": 0.6522055659097286,
+          "window_std": 0.021983256379417004,
+          "window_min": 0.6278481012658228,
+          "window_max": 0.6705729166666666,
+          "pooled": 0.6520255863539446,
+          "day_block_ci_low": 0.6326351174657922,
+          "day_block_ci_high": 0.6703719538264216
+        },
+        "recall": {
+          "window_mean": 0.9689280748690058,
+          "window_std": 0.01050993593652,
+          "window_min": 0.9626168224299065,
+          "window_max": 0.9810606060606061,
+          "pooled": 0.9689480354879595,
+          "day_block_ci_low": 0.9617510948797475,
+          "day_block_ci_high": 0.9779630248773015
+        },
+        "f1": {
+          "window_mean": 0.7794898186470075,
+          "window_std": 0.016798323010310846,
+          "window_min": 0.7601532567049808,
+          "window_max": 0.7904834996162702,
+          "pooled": 0.7795054804996177,
+          "day_block_ci_low": 0.765274949083503,
+          "day_block_ci_high": 0.7928480204342273
+        }
+      }
+    }
+  }
+}

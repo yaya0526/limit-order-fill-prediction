@@ -78,11 +78,24 @@ def apply_sigmoid_calibrator(calibrator, raw_probability):
     return calibrator.predict_proba(clipped_logit(raw_probability))[:, 1]
 
 
-def safe_probability_metrics(y_true, probability, threshold):
-    """Return discrimination, calibration, and threshold metrics for one slice."""
+def safe_probability_metrics(y_true, probability, threshold=None, predictions=None):
+    """Return probability and classification metrics for one slice.
+
+    Pass a threshold for a single policy, or explicit predictions when pooling
+    rolling windows that used different validation-selected thresholds.
+    """
     y_true = np.asarray(y_true, dtype=int)
     probability = np.asarray(probability, dtype=float)
-    predictions = (probability >= threshold).astype(int)
+    if predictions is None:
+        if threshold is None:
+            raise ValueError("Provide threshold or explicit predictions.")
+        predictions = (probability >= threshold).astype(int)
+    else:
+        predictions = np.asarray(predictions, dtype=int)
+        if len(predictions) != len(y_true):
+            raise ValueError("Explicit predictions must align with targets.")
+        if not np.isin(predictions, [0, 1]).all():
+            raise ValueError("Explicit predictions must be binary.")
     tn, fp, fn, tp = confusion_matrix(y_true, predictions, labels=[0, 1]).ravel()
     has_both_classes = np.unique(y_true).size == 2
 
