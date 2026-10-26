@@ -1,10 +1,14 @@
 # Limit Order Fill Probability Prediction
 
+[![CI](https://github.com/yaya0526/limit-order-fill-prediction/actions/workflows/ci.yml/badge.svg)](https://github.com/yaya0526/limit-order-fill-prediction/actions/workflows/ci.yml)
+[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-3110/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 > An end-to-end market-microstructure study of whether a resting AAPL limit order will fill within 5, 30, or 60 seconds.
 
 This repository turns order state, queue position, limit-order-book conditions, and recent order flow into calibrated fill-probability estimates. The workflow uses a chronological train/validation/test split, freezes model and threshold choices before opening the test set, and reports both predictive performance and failure modes.
 
-**Project status:** the research workflow is complete; reproducibility hardening is the next milestone.
+**Project status:** the research workflow is complete, with automated raw-data-free validation and unit tests. Full notebook execution still requires the restricted source data.
 
 > [!IMPORTANT]
 > The dataset is deterministic synthetic teaching data. Results must not be interpreted as evidence about real AAPL or Nasdaq execution.
@@ -75,6 +79,9 @@ Each horizon has its own eligibility mask to handle right-censoring. Rows withou
 | [`reports/`](reports/) | Technical report, presentation, and publication-ready figures |
 | [`docs/`](docs/) | Feature definitions and supporting project notes |
 | [`data/README.md`](data/README.md) | Local data setup, provenance, and integrity checks |
+| [`tests/`](tests/) | Raw-data-free unit and repository-contract tests |
+| [`scripts/check_repository.py`](scripts/check_repository.py) | One-command validation of published artifacts and links |
+| [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | Automated Python 3.11 checks for pushes and pull requests |
 
 ## Quick start
 
@@ -115,6 +122,15 @@ jupyter lab
 
 Run the numbered notebooks in ascending order. Existing committed outputs let reviewers inspect the completed study without access to the restricted raw files; re-running the full pipeline requires both source files above.
 
+### 4. Run the raw-data-free checks
+
+```bash
+python scripts/check_repository.py
+python -m pytest -q
+```
+
+These commands validate the reusable code, notebook structure, result schemas, local links, and privacy checks without requiring the Excel or JSON inputs. See the [`reproducibility guide`](docs/reproducibility.md) for Conda setup and the single-command `make ci` option.
+
 ## Evaluation principles
 
 - **Chronological holdout:** train on 14 days, validate on 3, test on the final 3.
@@ -125,7 +141,7 @@ Run the numbered notebooks in ascending order. Existing committed outputs let re
 
 ## What this project does—and does not—show
 
-This project demonstrates a disciplined fixed-horizon probability-modelling workflow on synthetic data. It does not claim a profitable trading strategy, live execution readiness, causal effects, or transferability to real exchange data. Important next steps include environment pinning, automated tests, command-line reproduction, notebook output sanitization, and evaluation on real or independently simulated data.
+This project demonstrates a disciplined fixed-horizon probability-modelling workflow on synthetic data. It does not claim a profitable trading strategy, live execution readiness, causal effects, or transferability to real exchange data. Important next steps include a fully locked dependency snapshot, raw-data-enabled notebook execution, survival-analysis extensions, and evaluation on real or independently simulated data.
 
 ## Reports and research artifacts
 
@@ -135,6 +151,7 @@ This project demonstrates a disciplined fixed-horizon probability-modelling work
 - [`results/final_test_summary.json`](results/final_test_summary.json): final policies and evaluation summary
 - [`results/validation_test_comparison.csv`](results/validation_test_comparison.csv): generalization deltas
 - [`docs/feature_reference.md`](docs/feature_reference.md): feature definitions
+- [`docs/reproducibility.md`](docs/reproducibility.md): environment and verification instructions
 
 ## Citation and license
 
