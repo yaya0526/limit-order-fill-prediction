@@ -16,7 +16,10 @@ from sklearn.metrics import (
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-from history_features import MODEL_HISTORY_FEATURES
+try:  # Package import used by tests and external callers.
+    from .history_features import MODEL_HISTORY_FEATURES
+except ImportError:  # Notebook compatibility when src/ is added to sys.path.
+    from history_features import MODEL_HISTORY_FEATURES
 
 
 A_NUMERIC = [

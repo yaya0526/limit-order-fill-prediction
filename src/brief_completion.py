@@ -7,7 +7,10 @@ import pandas as pd
 
 from lime.lime_tabular import LimeTabularExplainer
 
-from modeling import A_CATEGORICAL, C_ADDITIONAL_CATEGORICAL
+try:  # Package import used by tests and external callers.
+    from .modeling import A_CATEGORICAL, C_ADDITIONAL_CATEGORICAL
+except ImportError:  # Notebook compatibility when src/ is added to sys.path.
+    from modeling import A_CATEGORICAL, C_ADDITIONAL_CATEGORICAL
 
 
 CATEGORICAL_FEATURES = A_CATEGORICAL + C_ADDITIONAL_CATEGORICAL

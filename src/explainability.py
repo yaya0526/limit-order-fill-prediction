@@ -6,14 +6,24 @@ import pandas as pd
 from sklearn.inspection import permutation_importance
 from sklearn.metrics import average_precision_score
 
-from history_features import MODEL_HISTORY_FEATURES
-from modeling import (
-    A_CATEGORICAL,
-    A_NUMERIC,
-    B_ADDITIONAL_NUMERIC,
-    C_ADDITIONAL_CATEGORICAL,
-    C_ADDITIONAL_NUMERIC,
-)
+try:  # Package import used by tests and external callers.
+    from .history_features import MODEL_HISTORY_FEATURES
+    from .modeling import (
+        A_CATEGORICAL,
+        A_NUMERIC,
+        B_ADDITIONAL_NUMERIC,
+        C_ADDITIONAL_CATEGORICAL,
+        C_ADDITIONAL_NUMERIC,
+    )
+except ImportError:  # Notebook compatibility when src/ is added to sys.path.
+    from history_features import MODEL_HISTORY_FEATURES
+    from modeling import (
+        A_CATEGORICAL,
+        A_NUMERIC,
+        B_ADDITIONAL_NUMERIC,
+        C_ADDITIONAL_CATEGORICAL,
+        C_ADDITIONAL_NUMERIC,
+    )
 
 
 FEATURE_GROUPS = {

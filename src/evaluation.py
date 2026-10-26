@@ -16,7 +16,10 @@ from sklearn.metrics import (
 )
 from sklearn.pipeline import Pipeline
 
-from modeling import FEATURE_SETS, build_preprocessor
+try:  # Package import used by tests and external callers.
+    from .modeling import FEATURE_SETS, build_preprocessor
+except ImportError:  # Notebook compatibility when src/ is added to sys.path.
+    from modeling import FEATURE_SETS, build_preprocessor
 
 
 def build_estimator(feature_set_name, model_name, parameters, random_seed=42):
