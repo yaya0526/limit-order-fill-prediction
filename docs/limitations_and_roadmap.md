@@ -28,11 +28,11 @@ R2 replaces disconnected horizon probabilities with a three-interval hazard mode
 
 **Consequence:** 5/30/60-second probabilities are coherent, but the workflow does not estimate continuous-time hazards or cancellation probabilities.
 
-### 4. Probability quality is not decision utility
+### 4. Illustrative rather than measured decision utility
 
-ROC-AUC, PR-AUC, Brier score, and calibration error evaluate predictions, not the economic value of an order-placement decision. The 60-second policy predicts 96.4% of eligible orders as fills against a 64.3% observed rate. Its high F1 therefore coexists with weak selectivity.
+R3 replaces the near-universal F1 operating point with validation-selected cost policies and makes the precision/recall tradeoff explicit. The workbook lacks post-decision price paths and implementation shortfall, so its 3:1, 1:1, and 1:3 error costs remain normalized scenarios rather than measured economics.
 
-**Consequence:** a statistically reasonable model can still produce an operationally poor threshold.
+**Consequence:** the study can demonstrate decision sensitivity and selectivity, but cannot claim an economically optimal execution policy.
 
 ### 5. Queue and execution realism
 
@@ -74,13 +74,15 @@ SHAP, LIME, permutation importance, and response profiles explain how fitted mod
 
 **Completion:** the discrete-time logistic hazard model has zero monotonicity violations on validation and test data. Horizon-specific ROC-AUC, PR-AUC, Brier score, and ECE are reported with a censoring-aware risk-set audit. See [`time_to_fill_model.md`](time_to_fill_model.md).
 
-### R3 — Decision-aware thresholds
+### R3 — Decision-aware thresholds — complete
 
 **Question:** which threshold is useful when missed fills, false fills, adverse selection, and waiting time have different costs?
 
 **Method:** define a transparent utility or cost matrix, choose thresholds on validation data, and report sensitivity across plausible cost assumptions.
 
 **Acceptance criterion:** the operating point is justified by a stated objective and remains selective on held-out data; F1 is no longer the sole threshold criterion.
+
+**Completion:** thresholds now minimize explicit validation error costs under predeclared action-rate guardrails. The primary test policies act on 0.8%, 4.7%, and 20.4% of eligible orders, and sensitivity across three cost matrices is reported. See [`decision_thresholds.md`](decision_thresholds.md).
 
 ### R4 — Independent market simulation
 
@@ -102,8 +104,8 @@ SHAP, LIME, permutation importance, and response profiles explain how fitted mod
 
 1. R1 is complete; retain it as the temporal-stability baseline.
 2. R2 is complete; use it as the coherent probability baseline.
-3. Add R3 before describing any result as operationally useful.
+3. R3 is complete as a transparent sensitivity analysis; do not call it economically optimal without measured costs.
 4. Use R4 as a public robustness benchmark.
 5. Attempt R5 only with properly licensed data and documented exchange semantics.
 
-The next research milestone is **decision utility before more model complexity**: use R3 to replace generic F1 thresholds with an explicit cost objective and sensitivity analysis.
+The next research milestone is **independent-data stress testing**: R4 requires a genuinely different generator or simulator configuration before any portability claim.
