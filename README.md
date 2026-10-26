@@ -9,7 +9,7 @@
 
 This repository turns order state, queue position, limit-order-book conditions, and recent order flow into calibrated fill-probability estimates. The workflow uses a chronological train/validation/test split, freezes model and threshold choices before opening the test set, and reports both predictive performance and failure modes.
 
-**Project status:** the core workflow and research milestones R1–R3 are complete, covering rolling robustness, coherent time to fill, and decision-aware thresholds. Automated raw-data-free validation and unit tests protect the published artifacts. Full notebook execution still requires the restricted source data.
+**Project status:** the core workflow and research milestones R1–R4 are complete, covering rolling robustness, coherent time to fill, decision-aware thresholds, and independent simulation stress tests. Automated raw-data-free validation and unit tests protect the published artifacts. Full source-model reproduction still requires the restricted teaching data.
 
 > [!IMPORTANT]
 > The dataset is deterministic synthetic teaching data. Results must not be interpreted as evidence about real AAPL or Nasdaq execution.
@@ -90,6 +90,21 @@ The new 60-second policy is selective, but high precision comes with lower recal
 
 ![Decision-threshold tradeoffs](reports/figures/decision_threshold_tradeoffs.png)
 
+### Independent simulation stress test
+
+Frozen models and R3 thresholds were evaluated on four code-defined scenarios whose generator does not read the source workbook. The scenarios independently change spread, depth, volatility, order flow, and queue mechanics.
+
+| Scenario | Transfer horizons | Mean PR-AUC lift | Mean Brier skill | Regime result |
+|---|---:|---:|---:|---|
+| Liquid consistent | 3/3 | 0.347 | -0.589 | Successful ranking transfer |
+| Wide/thin/volatile | 3/3 | 0.516 | -0.674 | Successful ranking transfer |
+| Flow reversal | 2/3 | 0.184 | -3.407 | Successful but poorly calibrated |
+| Hidden queue | 0/3 | 0.015 | -47.216 | Failure regime |
+
+Ranking survives several shifts, but calibration transfers only for the two 60-second visible-queue scenarios. Frozen decision thresholds are mostly inactive after the shift, and hidden queue priority breaks transfer completely. See the [`independent simulation study`](docs/independent_simulation.md).
+
+![Independent simulation transfer](reports/figures/independent_simulation_transfer.png)
+
 ## Research design
 
 The prediction question is:
@@ -147,10 +162,12 @@ Each horizon has its own eligibility mask to handle right-censoring. Rows withou
 | [`scripts/run_rolling_origin.py`](scripts/run_rolling_origin.py) | Reproducible rolling-origin robustness experiment |
 | [`scripts/run_time_to_fill.py`](scripts/run_time_to_fill.py) | Reproducible censoring-aware time-to-fill experiment |
 | [`scripts/run_decision_thresholds.py`](scripts/run_decision_thresholds.py) | Reproducible cost-aware threshold sensitivity analysis |
+| [`scripts/run_independent_simulation.py`](scripts/run_independent_simulation.py) | Frozen-policy transfer test on independent scenarios |
 | [`docs/limitations_and_roadmap.md`](docs/limitations_and_roadmap.md) | Evidence boundaries and prioritized follow-up research |
 | [`docs/rolling_origin_robustness.md`](docs/rolling_origin_robustness.md) | R1 design, results, uncertainty, and limitations |
 | [`docs/time_to_fill_model.md`](docs/time_to_fill_model.md) | R2 hazard construction, coherence tests, and results |
 | [`docs/decision_thresholds.md`](docs/decision_thresholds.md) | R3 cost matrix, operating points, and sensitivity |
+| [`docs/independent_simulation.md`](docs/independent_simulation.md) | R4 generator, transfer criteria, successes, and failures |
 | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | Automated Python 3.11 checks for pushes and pull requests |
 
 ## Full reproduction
@@ -210,6 +227,12 @@ Run the decision-aware threshold extension:
 python scripts/run_decision_thresholds.py --excel data/raw/AI_Order_Execution.xlsx
 ```
 
+Run the independent simulation stress test. The generator itself is public and source-data independent; the workbook is used only to reconstruct the frozen source models:
+
+```bash
+python scripts/run_independent_simulation.py --excel data/raw/AI_Order_Execution.xlsx
+```
+
 ### 4. Run the raw-data-free checks
 
 ```bash
@@ -227,13 +250,14 @@ These commands validate the reusable code, notebook structure, result schemas, l
 - **Dependence-aware uncertainty:** the robustness extension resamples whole trading days rather than individual rows.
 - **Censoring-aware event time:** the hazard extension excludes within-interval censoring and guarantees non-decreasing cumulative probabilities.
 - **Explicit decision objective:** validation-only cost minimization replaces F1 as the sole threshold rule and reports sensitivity to cost ratios.
+- **Independent generator stress test:** frozen models and thresholds are scored under four declared market mechanisms without scenario-specific retuning.
 - **Imbalance-aware metrics:** PR-AUC, Brier score, expected calibration error, and horizon-specific fill rates complement ROC-AUC.
 - **Ablation before complexity:** feature groups are added incrementally to identify whether LOB, order flow, and history features earn their complexity.
 - **Interpretability with limits:** SHAP and LIME describe model behaviour; they do not establish causal market mechanisms.
 
 ## What this project does—and does not—show
 
-This project demonstrates disciplined probability and decision-policy workflows on synthetic data. It does not claim a profitable trading strategy, live execution readiness, causal effects, or transferability to real exchange data. The detailed [`limitations and research roadmap`](docs/limitations_and_roadmap.md) records the completed R1–R3 milestones and separates them from independent simulation and real-data validation.
+This project demonstrates disciplined probability and decision-policy workflows on synthetic data. R4 provides limited transfer evidence between synthetic generators, not evidence about real AAPL. The project does not claim a profitable trading strategy, live execution readiness, causal effects, or transferability to real exchange data. The detailed [`limitations and research roadmap`](docs/limitations_and_roadmap.md) records the completed R1–R4 milestones and keeps real-data validation separate.
 
 ## Reports and research artifacts
 
@@ -248,6 +272,8 @@ This project demonstrates disciplined probability and decision-policy workflows 
 - [`docs/time_to_fill_model.md`](docs/time_to_fill_model.md): censoring, probability coherence, and R2 interpretation
 - [`results/decision_threshold_comparison.csv`](results/decision_threshold_comparison.csv): cost-aware versus F1 operating points
 - [`docs/decision_thresholds.md`](docs/decision_thresholds.md): decision objective, selectivity, and sensitivity
+- [`results/independent_simulation_metrics.csv`](results/independent_simulation_metrics.csv): R4 scenario/horizon transfer metrics
+- [`docs/independent_simulation.md`](docs/independent_simulation.md): independent generator design and R4 interpretation
 - [`docs/feature_reference.md`](docs/feature_reference.md): feature definitions
 - [`docs/reproducibility.md`](docs/reproducibility.md): environment and verification instructions
 - [`docs/limitations_and_roadmap.md`](docs/limitations_and_roadmap.md): evidence boundary and research plan

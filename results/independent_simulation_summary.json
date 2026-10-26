@@ -1,0 +1,173 @@
+{
+  "status": "complete",
+  "design": {
+    "rows_per_scenario": 4000,
+    "model_random_seed": 42,
+    "simulation_random_seed": 20261026,
+    "scenario_manifest_sha256": "cbcfdc7a8cf195f1b55144d8a3f4e465c45e5f4188ea8e91ac72cea045aea7c6",
+    "transfer_rule": "PR-AUC must exceed scenario prevalence by more than 0.02; positive Brier skill additionally indicates calibration transfer",
+    "frozen_decision_scenario": "precision_first",
+    "generator_boundary": "Scenario parameters are code constants and are not estimated from the source workbook; source training rows are used only to reconstruct the already frozen models and calibrators."
+  },
+  "scenario_manifest": [
+    {
+      "name": "liquid_consistent",
+      "description": "Tighter spreads, deeper displayed liquidity, and faster order flow; fills follow visible queue depletion.",
+      "mechanism": "queue_depletion",
+      "spread_values": [
+        1,
+        2,
+        3
+      ],
+      "spread_probabilities": [
+        0.82,
+        0.15,
+        0.03
+      ],
+      "depth_scale": 1.25,
+      "volatility_bps": 0.65,
+      "flow_count_scale": 1.25,
+      "flow_volume_scale": 1.3,
+      "distance_probabilities": [
+        0.62,
+        0.23,
+        0.1,
+        0.04,
+        0.01
+      ],
+      "hidden_queue_scale": 0.0
+    },
+    {
+      "name": "wide_thin_volatile",
+      "description": "Wider spreads, thinner displayed depth, higher volatility, and slower order flow with the same visible queue-depletion mechanism.",
+      "mechanism": "queue_depletion",
+      "spread_values": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "spread_probabilities": [
+        0.25,
+        0.35,
+        0.25,
+        0.15
+      ],
+      "depth_scale": 0.55,
+      "volatility_bps": 2.2,
+      "flow_count_scale": 0.7,
+      "flow_volume_scale": 0.7,
+      "distance_probabilities": [
+        0.35,
+        0.28,
+        0.2,
+        0.12,
+        0.05
+      ],
+      "hidden_queue_scale": 0.0
+    },
+    {
+      "name": "flow_reversal",
+      "description": "Aggressive displayed flow triggers replenishment; observed flow against the order is therefore a misleading fill signal.",
+      "mechanism": "flow_reversal",
+      "spread_values": [
+        1,
+        2,
+        3
+      ],
+      "spread_probabilities": [
+        0.62,
+        0.28,
+        0.1
+      ],
+      "depth_scale": 0.95,
+      "volatility_bps": 1.15,
+      "flow_count_scale": 1.3,
+      "flow_volume_scale": 1.45,
+      "distance_probabilities": [
+        0.55,
+        0.25,
+        0.13,
+        0.05,
+        0.02
+      ],
+      "hidden_queue_scale": 0.0
+    },
+    {
+      "name": "hidden_queue",
+      "description": "Displayed depth is low but unobserved priority sits ahead of the order, breaking the visible-queue assumption.",
+      "mechanism": "hidden_queue",
+      "spread_values": [
+        1,
+        2,
+        3
+      ],
+      "spread_probabilities": [
+        0.7,
+        0.24,
+        0.06
+      ],
+      "depth_scale": 0.65,
+      "volatility_bps": 0.85,
+      "flow_count_scale": 1.0,
+      "flow_volume_scale": 1.0,
+      "distance_probabilities": [
+        0.6,
+        0.23,
+        0.11,
+        0.05,
+        0.01
+      ],
+      "hidden_queue_scale": 0.75
+    }
+  ],
+  "scenario_summaries": [
+    {
+      "scenario": "flow_reversal",
+      "scenario_status": "successful_transfer_regime",
+      "transfer_horizons": 2,
+      "failed_horizons": 1,
+      "mean_pr_auc_lift": 0.18424391164401185,
+      "mean_brier_skill_score": -3.407398198020548
+    },
+    {
+      "scenario": "hidden_queue",
+      "scenario_status": "failure_regime",
+      "transfer_horizons": 0,
+      "failed_horizons": 3,
+      "mean_pr_auc_lift": 0.014795920177372876,
+      "mean_brier_skill_score": -47.2159189659974
+    },
+    {
+      "scenario": "liquid_consistent",
+      "scenario_status": "successful_transfer_regime",
+      "transfer_horizons": 3,
+      "failed_horizons": 0,
+      "mean_pr_auc_lift": 0.34744148239650413,
+      "mean_brier_skill_score": -0.58915578036212
+    },
+    {
+      "scenario": "wide_thin_volatile",
+      "scenario_status": "successful_transfer_regime",
+      "transfer_horizons": 3,
+      "failed_horizons": 0,
+      "mean_pr_auc_lift": 0.5159045901146907,
+      "mean_brier_skill_score": -0.6738056911613527
+    }
+  ],
+  "acceptance": {
+    "scenario_parameters_declared_before_scoring": true,
+    "source_test_set_not_used": true,
+    "simulator_does_not_read_source_workbook": true,
+    "no_scenario_specific_model_or_threshold_retuning": true,
+    "successful_transfer_regimes": 3,
+    "failure_regimes": 1,
+    "both_success_and_failure_documented": true,
+    "passed": true
+  },
+  "limitations": [
+    "The independent generator is a transparent queue-depletion benchmark, not an exchange emulator.",
+    "It omits message-level latency, partial-fill paths, amendments, and venue-specific priority rules.",
+    "A scenario-level success is evidence of limited synthetic transfer, not evidence about live AAPL."
+  ]
+}

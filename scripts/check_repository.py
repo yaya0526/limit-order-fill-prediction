@@ -25,11 +25,13 @@ REQUIRED_PATHS = (
     "docs/rolling_origin_robustness.md",
     "docs/time_to_fill_model.md",
     "docs/decision_thresholds.md",
+    "docs/independent_simulation.md",
     "docs/releases/v0.1.0.md",
     "scripts/demo_results.py",
     "scripts/run_rolling_origin.py",
     "scripts/run_time_to_fill.py",
     "scripts/run_decision_thresholds.py",
+    "scripts/run_independent_simulation.py",
     "results/final_test_metrics.csv",
     "results/final_test_summary.json",
     "results/rolling_origin_predictions.csv",
@@ -42,10 +44,13 @@ REQUIRED_PATHS = (
     "results/decision_threshold_comparison.csv",
     "results/decision_threshold_results.csv",
     "results/decision_threshold_summary.json",
+    "results/independent_simulation_metrics.csv",
+    "results/independent_simulation_summary.json",
     "results/selected_model_policy.json",
     "reports/figures/rolling_origin_robustness.png",
     "reports/figures/time_to_fill_coherence.png",
     "reports/figures/decision_threshold_tradeoffs.png",
+    "reports/figures/independent_simulation_transfer.png",
 )
 
 EXPECTED_NOTEBOOKS = (
@@ -377,6 +382,85 @@ def validate_decision_thresholds() -> list[str]:
     return errors
 
 
+def validate_independent_simulation() -> list[str]:
+    errors: list[str] = []
+    path = ROOT / "results" / "independent_simulation_metrics.csv"
+    with path.open(newline="", encoding="utf-8") as handle:
+        reader = csv.DictReader(handle)
+        rows = list(reader)
+        fields = set(reader.fieldnames or [])
+    required = {
+        "scenario",
+        "mechanism",
+        "horizon_seconds",
+        "true_fill_rate",
+        "predicted_fill_rate",
+        "pr_auc_lift",
+        "brier_skill_score",
+        "transfer_status",
+    }
+    missing = required - fields
+    if missing:
+        errors.append(f"independent simulation metrics missing columns: {sorted(missing)}")
+        return errors
+    expected = {
+        (scenario, horizon)
+        for scenario in (
+            "liquid_consistent",
+            "wide_thin_volatile",
+            "flow_reversal",
+            "hidden_queue",
+        )
+        for horizon in (5, 30, 60)
+    }
+    actual = {(row["scenario"], int(row["horizon_seconds"])) for row in rows}
+    if actual != expected:
+        errors.append(f"unexpected independent simulation coverage: {actual}")
+    if "order_id" in fields:
+        errors.append("independent simulation artifact must remain aggregate-only")
+    valid_statuses = {
+        "failure",
+        "ranking_only_transfer",
+        "ranking_and_calibration_transfer",
+    }
+    for row in rows:
+        for key in ("true_fill_rate", "predicted_fill_rate"):
+            value = float(row[key])
+            if not 0 <= value <= 1:
+                errors.append(
+                    f"simulation {row['scenario']} {row['horizon_seconds']}s "
+                    f"{key} is outside [0, 1]: {value}"
+                )
+        if row["transfer_status"] not in valid_statuses:
+            errors.append(f"invalid simulation transfer status: {row['transfer_status']}")
+
+    summary_path = ROOT / "results" / "independent_simulation_summary.json"
+    try:
+        summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        errors.append(f"invalid JSON results/independent_simulation_summary.json: {exc}")
+        return errors
+    design = summary.get("design", {})
+    if len(design.get("scenario_manifest_sha256", "")) != 64:
+        errors.append("independent simulation manifest hash is missing or invalid")
+    acceptance = summary.get("acceptance", {})
+    for key in (
+        "scenario_parameters_declared_before_scoring",
+        "source_test_set_not_used",
+        "simulator_does_not_read_source_workbook",
+        "no_scenario_specific_model_or_threshold_retuning",
+        "both_success_and_failure_documented",
+        "passed",
+    ):
+        if acceptance.get(key) is not True:
+            errors.append(f"independent simulation acceptance failed: {key}")
+    if int(acceptance.get("successful_transfer_regimes", 0)) < 1:
+        errors.append("independent simulation must include a successful transfer regime")
+    if int(acceptance.get("failure_regimes", 0)) < 1:
+        errors.append("independent simulation must include a failure regime")
+    return errors
+
+
 def validate_markdown_links() -> list[str]:
     errors: list[str] = []
     link_pattern = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
@@ -426,6 +510,7 @@ def validate_repository() -> list[str]:
         validate_rolling_origin,
         validate_time_to_fill,
         validate_decision_thresholds,
+        validate_independent_simulation,
         validate_markdown_links,
         validate_no_personal_paths,
     ):

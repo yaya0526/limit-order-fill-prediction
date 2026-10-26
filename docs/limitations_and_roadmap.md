@@ -4,7 +4,7 @@ This document separates what the repository currently demonstrates from what a p
 
 ## Current evidence boundary
 
-The repository demonstrates a disciplined modelling workflow on deterministic synthetic teaching data. It shows how to construct fixed-horizon fill labels, preserve chronology, compare cumulative feature groups, calibrate probabilities, freeze a validation-selected policy, evaluate it on a held-out period, audit it across rolling origins, and construct a coherent discrete-time fill distribution.
+The repository demonstrates a disciplined modelling workflow on deterministic synthetic teaching data. It shows how to construct fixed-horizon fill labels, preserve chronology, compare cumulative feature groups, calibrate probabilities, freeze a validation-selected policy, evaluate it on a held-out period, audit it across rolling origins, construct a coherent discrete-time fill distribution, and stress frozen policies on a second code-defined generator.
 
 It does **not** demonstrate live AAPL execution quality, a profitable trading strategy, causal market mechanisms, or portability to another symbol, venue, or period.
 
@@ -12,9 +12,9 @@ It does **not** demonstrate live AAPL execution quality, a profitable trading st
 
 ### 1. Synthetic, single-symbol data
 
-The supplied data emulate AAPL-like order-book behaviour but do not reproduce every exchange rule, latency effect, hidden-liquidity interaction, or market regime. Because only one synthetic symbol and one 20-day sequence are available, cross-sectional and long-run temporal transfer are untested.
+The supplied data emulate AAPL-like order-book behaviour but do not reproduce every exchange rule, latency effect, hidden-liquidity interaction, or market regime. R4 adds an independent synthetic generator and demonstrates both ranking transfer and a hidden-queue failure, but only one synthetic symbol and one 20-day source sequence are available. Cross-sectional and long-run real-market transfer remain untested.
 
-**Consequence:** the measured discrimination and calibration describe this generator and split, not real Nasdaq execution.
+**Consequence:** the measured source performance and controlled simulator transfer do not establish real Nasdaq execution quality.
 
 ### 2. Limited chronological coverage
 
@@ -84,13 +84,15 @@ SHAP, LIME, permutation importance, and response profiles explain how fitted mod
 
 **Completion:** thresholds now minimize explicit validation error costs under predeclared action-rate guardrails. The primary test policies act on 0.8%, 4.7%, and 20.4% of eligible orders, and sensitivity across three cost matrices is reported. See [`decision_thresholds.md`](decision_thresholds.md).
 
-### R4 — Independent market simulation
+### R4 — Independent market simulation — complete
 
 **Question:** are conclusions robust to a different data-generating process?
 
 **Method:** test on an independently configured simulator with changed spread, depth, volatility, and order-flow regimes.
 
 **Acceptance criterion:** the evaluation documents both successful transfer and failure regimes without retuning on the final test scenario.
+
+**Completion:** four predeclared 4,000-order regimes change spread, depth, volatility, order flow, and queue mechanics. Frozen models retain ranking in three regimes, calibration transfers only in two 60-second slices, and hidden queue priority fails at all horizons. No scenario-specific model, calibration, or threshold tuning is performed. See [`independent_simulation.md`](independent_simulation.md).
 
 ### R5 — Real-data validation
 
@@ -105,7 +107,7 @@ SHAP, LIME, permutation importance, and response profiles explain how fitted mod
 1. R1 is complete; retain it as the temporal-stability baseline.
 2. R2 is complete; use it as the coherent probability baseline.
 3. R3 is complete as a transparent sensitivity analysis; do not call it economically optimal without measured costs.
-4. Use R4 as a public robustness benchmark.
-5. Attempt R5 only with properly licensed data and documented exchange semantics.
+4. R4 is complete as a public robustness benchmark; retain its failure regimes rather than optimizing them away.
+5. R5 is the remaining milestone and must wait for properly licensed event-level data and documented exchange semantics.
 
-The next research milestone is **independent-data stress testing**: R4 requires a genuinely different generator or simulator configuration before any portability claim.
+The next research milestone is **licensed real-data validation**. It cannot be completed from the current workbook or by downloading an unverified public sample: provenance, entitlements, venue rules, timestamps, and queue reconstruction must be auditable first.
