@@ -28,6 +28,7 @@ REQUIRED_PATHS = (
     "docs/independent_simulation.md",
     "docs/real_data_validation_protocol.md",
     "docs/releases/v0.1.0.md",
+    "docs/releases/v0.2.0.md",
     "scripts/demo_results.py",
     "scripts/run_rolling_origin.py",
     "scripts/run_time_to_fill.py",

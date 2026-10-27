@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: "If you use this research code or its results, please cite it as follows."
 title: "Limit Order Fill Probability Prediction"
 type: software
-version: 0.1.0
-date-released: 2026-10-26
+version: 0.2.0
+date-released: 2026-10-27
 authors:
   - name: "yaya0526"
     website: "https://github.com/yaya0526"
@@ -12,8 +12,9 @@ url: "https://github.com/yaya0526/limit-order-fill-prediction"
 license: MIT
 abstract: >-
   A reproducible machine-learning study of 5-, 30-, and 60-second
-  limit-order fill probabilities using synthetic AAPL order,
-  limit-order-book, and recent order-flow features.
+  limit-order fill probabilities, rolling robustness, coherent time to fill,
+  decision-aware thresholds, independent simulation stress tests, and
+  licensed real-data readiness gates.
 keywords:
   - limit-order-book
   - fill-probability
