@@ -50,6 +50,7 @@ The validation script checks:
 - local Markdown links;
 - required result and policy artifacts;
 - R1–R4 acceptance records, including independent-simulation coverage and aggregate-only outputs;
+- the R5 readiness status and machine-readable schema files;
 - accidental personal absolute paths.
 
 ## Re-run the notebooks
@@ -67,6 +68,19 @@ python scripts/run_independent_simulation.py --excel data/raw/AI_Order_Execution
 ```
 
 The simulator itself does not read the workbook; the workbook is used only to reconstruct the frozen source estimator and calibrator. Only aggregate scenario metrics are committed.
+
+## Validate an authorized R5 event package
+
+Keep the manifest and event files outside the repository, then run:
+
+```bash
+python scripts/check_real_data_readiness.py \
+  --manifest /authorized/path/manifest.json \
+  --events /authorized/path/events.csv \
+  --json
+```
+
+The event path must be declared in the manifest and match its SHA-256 digest. Passing the tool confirms provenance fields, entitlement confirmation, the normalized CSV contract, symbol/date scope, chronological sequence, and basic event control totals. It does not replace venue-semantic reconstruction or independent audit. See [`real_data_validation_protocol.md`](real_data_validation_protocol.md).
 
 ## What CI does not do
 

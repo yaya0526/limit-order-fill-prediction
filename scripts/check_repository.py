@@ -26,12 +26,16 @@ REQUIRED_PATHS = (
     "docs/time_to_fill_model.md",
     "docs/decision_thresholds.md",
     "docs/independent_simulation.md",
+    "docs/real_data_validation_protocol.md",
     "docs/releases/v0.1.0.md",
     "scripts/demo_results.py",
     "scripts/run_rolling_origin.py",
     "scripts/run_time_to_fill.py",
     "scripts/run_decision_thresholds.py",
     "scripts/run_independent_simulation.py",
+    "scripts/check_real_data_readiness.py",
+    "schemas/real_data_manifest.schema.json",
+    "schemas/normalized_l3_event.schema.json",
     "results/final_test_metrics.csv",
     "results/final_test_summary.json",
     "results/rolling_origin_predictions.csv",
@@ -46,6 +50,7 @@ REQUIRED_PATHS = (
     "results/decision_threshold_summary.json",
     "results/independent_simulation_metrics.csv",
     "results/independent_simulation_summary.json",
+    "results/real_data_readiness_status.json",
     "results/selected_model_policy.json",
     "reports/figures/rolling_origin_robustness.png",
     "reports/figures/time_to_fill_coherence.png",
@@ -461,6 +466,40 @@ def validate_independent_simulation() -> list[str]:
     return errors
 
 
+def validate_real_data_readiness() -> list[str]:
+    errors: list[str] = []
+    schema_paths = (
+        "schemas/real_data_manifest.schema.json",
+        "schemas/normalized_l3_event.schema.json",
+    )
+    for relative in schema_paths:
+        try:
+            schema = json.loads((ROOT / relative).read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append(f"invalid JSON schema {relative}: {exc}")
+            continue
+        if schema.get("type") != "object" or not schema.get("required"):
+            errors.append(f"{relative} must define an object with required fields")
+
+    status_path = ROOT / "results" / "real_data_readiness_status.json"
+    try:
+        status = json.loads(status_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        errors.append(f"invalid JSON results/real_data_readiness_status.json: {exc}")
+        return errors
+    if status.get("status") != "ready_for_authorized_data":
+        errors.append("R5 status must remain ready_for_authorized_data until empirical work starts")
+    if status.get("implementation_readiness_complete") is not True:
+        errors.append("R5 implementation readiness is not recorded as complete")
+    if status.get("empirical_validation_complete") is not False:
+        errors.append("R5 must not claim empirical validation without licensed results")
+    if status.get("r5_acceptance_met") is not False:
+        errors.append("R5 acceptance must remain unmet before independent real-data audit")
+    if not status.get("external_requirements"):
+        errors.append("R5 status must record its external requirements")
+    return errors
+
+
 def validate_markdown_links() -> list[str]:
     errors: list[str] = []
     link_pattern = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
@@ -511,6 +550,7 @@ def validate_repository() -> list[str]:
         validate_time_to_fill,
         validate_decision_thresholds,
         validate_independent_simulation,
+        validate_real_data_readiness,
         validate_markdown_links,
         validate_no_personal_paths,
     ):

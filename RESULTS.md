@@ -101,6 +101,14 @@ Ranking transfer requires PR-AUC to exceed scenario prevalence by more than 0.02
 
 See [`docs/independent_simulation.md`](docs/independent_simulation.md) for the generator equations, parameter manifest, all horizon metrics, and limitations.
 
+## Real-data validation status
+
+R5 has no performance result yet. The repository now provides a strict licensed-data intake contract and independent-audit protocol, but the required event stream, entitlement evidence, venue semantics, and external reviewer are not present.
+
+Completed readiness components include manifest and normalized-event schemas, SHA-256 verification, stream chronology and control-total checks, future-label leakage rejection, and explicit reconstruction/evaluation gates. The machine-readable status is `ready_for_authorized_data`, with `empirical_validation_complete=false` and `r5_acceptance_met=false`.
+
+See [`docs/real_data_validation_protocol.md`](docs/real_data_validation_protocol.md). This separation prevents infrastructure readiness from being mistaken for evidence about live AAPL execution.
+
 ## Feature-set conclusions
 
 The experiment compares cumulative feature groups:
@@ -150,6 +158,7 @@ See [`results/final_test_slice_metrics.csv`](results/final_test_slice_metrics.cs
 | [`results/decision_threshold_summary.json`](results/decision_threshold_summary.json) | R3 objective, guardrails, and acceptance record |
 | [`results/independent_simulation_metrics.csv`](results/independent_simulation_metrics.csv) | R4 scenario/horizon transfer and decision metrics |
 | [`results/independent_simulation_summary.json`](results/independent_simulation_summary.json) | R4 generator manifest and acceptance record |
+| [`results/real_data_readiness_status.json`](results/real_data_readiness_status.json) | Honest R5 readiness and external-blocker record |
 | [`results/brief_completion_summary.json`](results/brief_completion_summary.json) | Checklist against the project brief |
 | [`reports/figures/`](reports/figures/) | Calibration, discrimination, ablation, and explanation plots |
 | [`reports/`](reports/) | Technical report and presentation |
@@ -163,6 +172,7 @@ See [`results/final_test_slice_metrics.csv`](results/final_test_slice_metrics.cs
 - **Uncertainty:** the final holdout still uses row-level intervals; the R1 extension adds day-block intervals but has only six independent rolling test days.
 - **No economic backtest:** fill classification is not equivalent to realized implementation shortfall or trading profitability.
 - **Independent but still synthetic:** R4 changes the generator and records a failure regime, but does not emulate exchange messages or validate live execution.
+- **R5 not yet empirical:** schemas and audit gates are ready, but no licensed exchange data have been evaluated.
 
 The full evidence boundary, follow-up questions, and measurable acceptance criteria are documented in [`docs/limitations_and_roadmap.md`](docs/limitations_and_roadmap.md).
 
