@@ -9,7 +9,7 @@
 
 This repository turns order state, queue position, limit-order-book conditions, and recent order flow into calibrated fill-probability estimates. The workflow uses a chronological train/validation/test split, freezes model and threshold choices before opening the test set, and reports both predictive performance and failure modes.
 
-**Project status:** the core workflow and research milestones R1–R4 are complete, covering rolling robustness, coherent time to fill, decision-aware thresholds, and independent simulation stress tests. Automated raw-data-free validation and unit tests protect the published artifacts. Full source-model reproduction still requires the restricted teaching data.
+**Project status:** the core workflow and research milestones R1–R4 are complete, covering rolling robustness, coherent time to fill, decision-aware thresholds, and independent simulation stress tests. The R5 licensed-data intake and audit package is ready, but real-data validation has not started because no authorized event stream is present. Automated raw-data-free validation and unit tests protect the published artifacts.
 
 > [!IMPORTANT]
 > The dataset is deterministic synthetic teaching data. Results must not be interpreted as evidence about real AAPL or Nasdaq execution.
@@ -105,6 +105,12 @@ Ranking survives several shifts, but calibration transfers only for the two 60-s
 
 ![Independent simulation transfer](reports/figures/independent_simulation_transfer.png)
 
+### Licensed real-data readiness
+
+R5 now has a machine-readable provenance manifest, normalized level-3 event contract, streaming intake validator, integrity and chronology checks, leakage guards, and a venue-reconstruction audit protocol. This is infrastructure, not empirical evidence: the milestone remains incomplete until authorized data pass every gate and an independent reviewer signs off.
+
+See the [`real-data validation protocol`](docs/real_data_validation_protocol.md) and machine-readable [`readiness status`](results/real_data_readiness_status.json).
+
 ## Research design
 
 The prediction question is:
@@ -163,11 +169,13 @@ Each horizon has its own eligibility mask to handle right-censoring. Rows withou
 | [`scripts/run_time_to_fill.py`](scripts/run_time_to_fill.py) | Reproducible censoring-aware time-to-fill experiment |
 | [`scripts/run_decision_thresholds.py`](scripts/run_decision_thresholds.py) | Reproducible cost-aware threshold sensitivity analysis |
 | [`scripts/run_independent_simulation.py`](scripts/run_independent_simulation.py) | Frozen-policy transfer test on independent scenarios |
+| [`scripts/check_real_data_readiness.py`](scripts/check_real_data_readiness.py) | R5 provenance, integrity, schema, chronology, and leakage gate |
 | [`docs/limitations_and_roadmap.md`](docs/limitations_and_roadmap.md) | Evidence boundaries and prioritized follow-up research |
 | [`docs/rolling_origin_robustness.md`](docs/rolling_origin_robustness.md) | R1 design, results, uncertainty, and limitations |
 | [`docs/time_to_fill_model.md`](docs/time_to_fill_model.md) | R2 hazard construction, coherence tests, and results |
 | [`docs/decision_thresholds.md`](docs/decision_thresholds.md) | R3 cost matrix, operating points, and sensitivity |
 | [`docs/independent_simulation.md`](docs/independent_simulation.md) | R4 generator, transfer criteria, successes, and failures |
+| [`docs/real_data_validation_protocol.md`](docs/real_data_validation_protocol.md) | R5 licensed-data, venue reconstruction, and independent-audit gates |
 | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) | Automated Python 3.11 checks for pushes and pull requests |
 
 ## Full reproduction
@@ -233,6 +241,14 @@ Run the independent simulation stress test. The generator itself is public and s
 python scripts/run_independent_simulation.py --excel data/raw/AI_Order_Execution.xlsx
 ```
 
+When an authorized normalized event package is available, run the R5 intake gate before any reconstruction or modelling:
+
+```bash
+python scripts/check_real_data_readiness.py \
+  --manifest /authorized/path/manifest.json \
+  --events /authorized/path/events.csv
+```
+
 ### 4. Run the raw-data-free checks
 
 ```bash
@@ -257,7 +273,7 @@ These commands validate the reusable code, notebook structure, result schemas, l
 
 ## What this project does—and does not—show
 
-This project demonstrates disciplined probability and decision-policy workflows on synthetic data. R4 provides limited transfer evidence between synthetic generators, not evidence about real AAPL. The project does not claim a profitable trading strategy, live execution readiness, causal effects, or transferability to real exchange data. The detailed [`limitations and research roadmap`](docs/limitations_and_roadmap.md) records the completed R1–R4 milestones and keeps real-data validation separate.
+This project demonstrates disciplined probability and decision-policy workflows on synthetic data. R4 provides limited transfer evidence between synthetic generators, not evidence about real AAPL. R5 tooling defines what authorized real-data validation must prove, but has not produced real-data results. The project does not claim a profitable trading strategy, live execution readiness, causal effects, or transferability to real exchange data. The detailed [`limitations and research roadmap`](docs/limitations_and_roadmap.md) records the completed R1–R4 milestones and the externally blocked R5 evidence gate.
 
 ## Reports and research artifacts
 
@@ -274,6 +290,9 @@ This project demonstrates disciplined probability and decision-policy workflows 
 - [`docs/decision_thresholds.md`](docs/decision_thresholds.md): decision objective, selectivity, and sensitivity
 - [`results/independent_simulation_metrics.csv`](results/independent_simulation_metrics.csv): R4 scenario/horizon transfer metrics
 - [`docs/independent_simulation.md`](docs/independent_simulation.md): independent generator design and R4 interpretation
+- [`schemas/real_data_manifest.schema.json`](schemas/real_data_manifest.schema.json): licensed-data provenance contract
+- [`schemas/normalized_l3_event.schema.json`](schemas/normalized_l3_event.schema.json): normalized event-row contract
+- [`docs/real_data_validation_protocol.md`](docs/real_data_validation_protocol.md): R5 intake, reconstruction, evaluation, and audit protocol
 - [`docs/feature_reference.md`](docs/feature_reference.md): feature definitions
 - [`docs/reproducibility.md`](docs/reproducibility.md): environment and verification instructions
 - [`docs/limitations_and_roadmap.md`](docs/limitations_and_roadmap.md): evidence boundary and research plan

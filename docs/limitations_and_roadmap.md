@@ -94,7 +94,7 @@ SHAP, LIME, permutation importance, and response profiles explain how fitted mod
 
 **Completion:** four predeclared 4,000-order regimes change spread, depth, volatility, order flow, and queue mechanics. Frozen models retain ranking in three regimes, calibration transfers only in two 60-second slices, and hidden queue priority fails at all horizons. No scenario-specific model, calibration, or threshold tuning is performed. See [`independent_simulation.md`](independent_simulation.md).
 
-### R5 — Real-data validation
+### R5 — Real-data validation — intake ready, empirical study pending
 
 **Question:** which findings survive on licensed event-level exchange data?
 
@@ -102,12 +102,14 @@ SHAP, LIME, permutation importance, and response profiles explain how fitted mod
 
 **Acceptance criterion:** provenance, entitlements, timestamp alignment, leakage checks, and execution assumptions receive an independent audit before performance claims are made.
 
+**Current progress:** the repository now includes provenance and event schemas, a streaming integrity/chronology/leakage validator, a venue-reconstruction checklist, a frozen-evaluation protocol, and explicit publication boundaries. See [`real_data_validation_protocol.md`](real_data_validation_protocol.md). Empirical acceptance remains unmet because licensed event data, venue-specific semantics, and independent audit sign-off are external requirements.
+
 ## Recommended execution order
 
 1. R1 is complete; retain it as the temporal-stability baseline.
 2. R2 is complete; use it as the coherent probability baseline.
 3. R3 is complete as a transparent sensitivity analysis; do not call it economically optimal without measured costs.
 4. R4 is complete as a public robustness benchmark; retain its failure regimes rather than optimizing them away.
-5. R5 is the remaining milestone and must wait for properly licensed event-level data and documented exchange semantics.
+5. R5 intake and audit infrastructure is ready; run it only after properly licensed event-level data and documented exchange semantics are available.
 
 The next research milestone is **licensed real-data validation**. It cannot be completed from the current workbook or by downloading an unverified public sample: provenance, entitlements, venue rules, timestamps, and queue reconstruction must be auditable first.

@@ -1,0 +1,24 @@
+{
+  "milestone": "R5_real_data_validation",
+  "status": "ready_for_authorized_data",
+  "implementation_readiness_complete": true,
+  "empirical_validation_complete": false,
+  "r5_acceptance_met": false,
+  "available_components": [
+    "provenance and entitlement manifest schema",
+    "normalized level-3 event schema",
+    "streaming CSV intake validator",
+    "SHA-256 integrity verification",
+    "timestamp and sequence-order checks",
+    "future-label leakage guard",
+    "venue reconstruction and independent audit protocol"
+  ],
+  "external_requirements": [
+    "licensed event-level exchange data",
+    "documented permission for intended analysis and aggregate publication",
+    "venue semantics and rulebook snapshot",
+    "independent audit reviewer"
+  ],
+  "publication_boundary": "Commit code, schemas, configuration hashes, aggregate metrics, and non-sensitive figures only; keep raw events, identifiers, entitlements, and row-level reconstructions private.",
+  "next_action": "Run scripts/check_real_data_readiness.py on an authorized local manifest and normalized event file, then complete venue-specific reconstruction before modelling."
+}

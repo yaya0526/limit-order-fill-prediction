@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/yaya0526/limit-order-fill-prediction/schemas/real_data_manifest.schema.json",
+  "title": "Licensed event-data provenance manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "dataset_id",
+    "provider",
+    "license_reference",
+    "entitlement_confirmed",
+    "venue",
+    "symbols",
+    "timezone",
+    "timestamp_unit",
+    "tick_size",
+    "schema_version",
+    "date_range",
+    "files"
+  ],
+  "properties": {
+    "dataset_id": {"type": "string", "minLength": 1},
+    "provider": {"type": "string", "minLength": 1},
+    "license_reference": {"type": "string", "minLength": 1},
+    "entitlement_confirmed": {"const": true},
+    "venue": {"type": "string", "minLength": 1},
+    "symbols": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "timezone": {"type": "string", "minLength": 1},
+    "timestamp_unit": {"const": "nanoseconds"},
+    "tick_size": {"type": "number", "exclusiveMinimum": 0},
+    "schema_version": {"type": "string", "minLength": 1},
+    "date_range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end"],
+      "properties": {
+        "start": {"type": "string", "format": "date"},
+        "end": {"type": "string", "format": "date"}
+      }
+    },
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256", "kind"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "kind": {
+            "enum": ["events", "reference", "corporate_actions"]
+          }
+        }
+      }
+    }
+  }
+}

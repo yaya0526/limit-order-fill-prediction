@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/yaya0526/limit-order-fill-prediction/schemas/normalized_l3_event.schema.json",
+  "title": "Normalized level-3 order-book event row",
+  "description": "Logical row contract. The R5 intake tool applies the same fields to CSV event files.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "dataset_id",
+    "venue",
+    "symbol",
+    "trading_day",
+    "event_timestamp_ns",
+    "sequence_number",
+    "message_type",
+    "side",
+    "order_id",
+    "price_ticks",
+    "quantity"
+  ],
+  "properties": {
+    "dataset_id": {"type": "string", "minLength": 1},
+    "venue": {"type": "string", "minLength": 1},
+    "symbol": {"type": "string", "minLength": 1},
+    "trading_day": {"type": "string", "format": "date"},
+    "event_timestamp_ns": {"type": "integer", "minimum": 1},
+    "sequence_number": {"type": "integer", "minimum": 0},
+    "message_type": {"enum": ["add", "modify", "cancel", "execute"]},
+    "side": {"enum": ["buy", "sell"]},
+    "order_id": {"type": "string", "minLength": 1},
+    "price_ticks": {"type": "integer", "minimum": 1},
+    "quantity": {"type": "integer", "minimum": 1}
+  }
+}

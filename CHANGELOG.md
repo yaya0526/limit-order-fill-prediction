@@ -16,10 +16,14 @@ All notable public repository changes are documented here.
 - R3 selectivity guardrails, aggregate decision artifacts, tradeoff figure, and four unit tests.
 - independent queue-depletion simulator with four fixed market and queue-mechanism regimes;
 - R4 frozen-policy transfer metrics, scenario manifest hash, failure-regime audit, figure, and four unit tests.
+- R5 provenance manifest and normalized level-3 event schemas;
+- licensed-data intake validator with entitlement, digest, chronology, control-total, and leakage gates;
+- venue reconstruction, frozen evaluation, publication, and independent-audit protocol plus five tests.
 
 ### Changed
 
 - repository summary and roadmap now distinguish the completed R1–R4 milestones from licensed real-data validation.
+- R5 status now distinguishes completed intake readiness from externally blocked empirical validation.
 
 ## [0.1.0] — 2026-10-26
 
