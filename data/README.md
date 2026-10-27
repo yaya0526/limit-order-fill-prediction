@@ -67,3 +67,5 @@ The first notebook performs the detailed audit and exports its diagnostics to `r
 ## Data availability statement
 
 The repository contains derived metrics, figures, and documentation so the completed analysis can be reviewed without the raw files. Full reproduction requires separately authorized access to both teaching-data files. The MIT license for the code does not change the ownership or redistribution terms of the source data.
+
+R4 additionally contains a public deterministic generator in [`src/market_simulation.py`](../src/market_simulation.py). It does not reconstruct or redistribute source rows. The workbook is needed by the R4 runner only to refit the already frozen source models before they are scored on generated scenarios.

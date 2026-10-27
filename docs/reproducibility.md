@@ -49,6 +49,7 @@ The validation script checks:
 - confusion-matrix and probability-range consistency;
 - local Markdown links;
 - required result and policy artifacts;
+- R1–R4 acceptance records, including independent-simulation coverage and aggregate-only outputs;
 - accidental personal absolute paths.
 
 ## Re-run the notebooks
@@ -58,6 +59,14 @@ The validation script checks:
 3. Run notebooks `01` through `08` in ascending order.
 
 The notebooks resolve paths from the repository root. Advanced users can override output locations with the environment variables already documented in the evaluation notebooks, including `LIMIT_ORDER_PROJECT_ROOT`, `LIMIT_ORDER_ARTIFACT_DIR`, and `LIMIT_ORDER_FIGURE_DIR`.
+
+The scripted R1–R4 extensions use the workbook but not the history JSON. Run the latest independent simulation study with:
+
+```bash
+python scripts/run_independent_simulation.py --excel data/raw/AI_Order_Execution.xlsx
+```
+
+The simulator itself does not read the workbook; the workbook is used only to reconstruct the frozen source estimator and calibrator. Only aggregate scenario metrics are committed.
 
 ## What CI does not do
 

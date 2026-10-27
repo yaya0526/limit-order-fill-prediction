@@ -10,6 +10,7 @@ This page is the reviewer-facing summary of the completed analysis. Values below
 - The 50-snapshot history block does not produce a robust, repeatable gain over the simpler feature sets.
 - Calibration error is numerically small, but classification thresholds can still create an impractical operating policy—most clearly at 60 seconds.
 - Queue-ahead quantity, price distance, aggressive volume against the order, and normalized queue position are leading model drivers.
+- Independent simulation retains ranking in three regimes but exposes weak calibration, nearly inactive frozen thresholds, and complete failure under hidden queue priority.
 
 ## Frozen held-out test results
 
@@ -83,6 +84,23 @@ The cost-based 60-second policy is no longer near-universal and is much more pre
 
 See [`docs/decision_thresholds.md`](docs/decision_thresholds.md) for the objective, validation-only selection rule, sensitivity table, and economic-data limitation.
 
+## Independent simulation transfer
+
+R4 freezes the selected source models, sigmoid calibrators, and R3 precision-first thresholds, then scores four independently configured 4,000-order scenarios. The generator does not read the workbook or fit its parameters to source rows.
+
+| Scenario | Ranking transfer | Calibration transfer | Frozen-policy behavior | Overall regime |
+|---|---|---|---|---|
+| Liquid consistent | 5s, 30s, 60s | 60s only | 0.0%–2.8% positive | Successful transfer |
+| Wide/thin/volatile | 5s, 30s, 60s | 60s only | 0.0%–1.0% positive | Successful transfer |
+| Flow reversal | 30s, 60s | None | 0.0%–4.2% positive | Successful but miscalibrated |
+| Hidden queue | None | None | 0.0%–3.1% positive | Failure regime |
+
+Ranking transfer requires PR-AUC to exceed scenario prevalence by more than 0.02; positive Brier skill additionally marks calibration transfer. The mixed result is the point of the experiment: the models often retain ordering information, but source probabilities and thresholds are not portable. Hidden priority defeats all three horizons.
+
+![Independent simulation transfer](reports/figures/independent_simulation_transfer.png)
+
+See [`docs/independent_simulation.md`](docs/independent_simulation.md) for the generator equations, parameter manifest, all horizon metrics, and limitations.
+
 ## Feature-set conclusions
 
 The experiment compares cumulative feature groups:
@@ -130,6 +148,8 @@ See [`results/final_test_slice_metrics.csv`](results/final_test_slice_metrics.cs
 | [`results/time_to_fill_summary.json`](results/time_to_fill_summary.json) | R2 model design and probability-coherence audit |
 | [`results/decision_threshold_comparison.csv`](results/decision_threshold_comparison.csv) | R3 primary cost policy versus original F1 policy |
 | [`results/decision_threshold_summary.json`](results/decision_threshold_summary.json) | R3 objective, guardrails, and acceptance record |
+| [`results/independent_simulation_metrics.csv`](results/independent_simulation_metrics.csv) | R4 scenario/horizon transfer and decision metrics |
+| [`results/independent_simulation_summary.json`](results/independent_simulation_summary.json) | R4 generator manifest and acceptance record |
 | [`results/brief_completion_summary.json`](results/brief_completion_summary.json) | Checklist against the project brief |
 | [`reports/figures/`](reports/figures/) | Calibration, discrimination, ablation, and explanation plots |
 | [`reports/`](reports/) | Technical report and presentation |
@@ -142,9 +162,10 @@ See [`results/final_test_slice_metrics.csv`](results/final_test_slice_metrics.cs
 - **Economic inputs:** R3 makes error-cost assumptions explicit, but the dataset cannot estimate real waiting cost, adverse selection, or implementation shortfall.
 - **Uncertainty:** the final holdout still uses row-level intervals; the R1 extension adds day-block intervals but has only six independent rolling test days.
 - **No economic backtest:** fill classification is not equivalent to realized implementation shortfall or trading profitability.
+- **Independent but still synthetic:** R4 changes the generator and records a failure regime, but does not emulate exchange messages or validate live execution.
 
 The full evidence boundary, follow-up questions, and measurable acceptance criteria are documented in [`docs/limitations_and_roadmap.md`](docs/limitations_and_roadmap.md).
 
 ## Reproducibility and provenance
 
-The study uses the supplied chronological 14/3/3-day split and random seed 42. Final policies were frozen before the one-time test evaluation. R1 audits those specifications across three earlier rolling origins. R2 fixes a common logistic hazard specification, fits it on the training period, and evaluates coherent probabilities on validation and test periods. Raw teaching data are not redistributed, but derived outputs and committed notebook results are included for auditability. See [`data/README.md`](data/README.md) for the local input contract.
+The study uses the supplied chronological 14/3/3-day split and random seed 42. Final policies were frozen before the one-time test evaluation. R1 audits those specifications across three earlier rolling origins. R2 fixes a common logistic hazard specification and evaluates coherent probabilities. R3 fixes explicit validation cost policies. R4 uses simulation seed `20261026`, a hashed parameter manifest, and no scenario-specific retuning. Raw teaching data are not redistributed, but derived aggregate outputs and committed notebook results are included for auditability. See [`data/README.md`](data/README.md) for the local input contract.
