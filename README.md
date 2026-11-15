@@ -306,12 +306,16 @@ Citation metadata are provided in [`CITATION.cff`](CITATION.cff).
 Code and repository documentation are released under the [MIT License](LICENSE). The license does not grant redistribution rights for the separately supplied course data.
 
 
-## Research reports and presentation
 
-For a guided review of the research artifacts, see the [reports index](reports/README.md):
+## Research Portfolio
 
-- [Technical research report (existing PDF)](reports/limit_order_fill_prediction_technical_report.pdf)
-- [Research presentation (existing PPTX)](reports/limit_order_fill_prediction_presentation.pptx)
-- [Experiment / model-version / SHAP reconciliation](docs/experiment_reconciliation.md)
+- [Research Report (PDF)](reports/SJTU_Limit_Order_Execution_Report.pdf)
+- [Research Presentation (PDF)](reports/SJTU_Portfolio_Overleaf_Project.pdf)
+- [Experiment Reconciliation](docs/experiment_reconciliation.md)
 
-**Version note (November 2026):** The existing PDF/PPTX are preserved as historical repository artifacts. A shorter reviewed report and revised presentation were prepared separately; they are **not yet uploaded to this repository**. See the reconciliation note before comparing any figures from the original SJTU summer-school slide deck with the frozen held-out pipeline. The study uses synthetic data, and collaborative contributions should be credited appropriately.
+The report documents my individual research
+contributions, while the presentation also
+summarizes collaborative summer-school experiments.
+Different experimental pipelines are clearly
+distinguished.
+ uses synthetic data, and collaborative contributions should be credited appropriately.
