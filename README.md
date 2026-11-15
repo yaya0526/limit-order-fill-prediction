@@ -304,3 +304,14 @@ This project demonstrates disciplined probability and decision-policy workflows 
 Citation metadata are provided in [`CITATION.cff`](CITATION.cff).
 
 Code and repository documentation are released under the [MIT License](LICENSE). The license does not grant redistribution rights for the separately supplied course data.
+
+
+## Research reports and presentation
+
+For a guided review of the research artifacts, see the [reports index](reports/README.md):
+
+- [Technical research report (existing PDF)](reports/limit_order_fill_prediction_technical_report.pdf)
+- [Research presentation (existing PPTX)](reports/limit_order_fill_prediction_presentation.pptx)
+- [Experiment / model-version / SHAP reconciliation](docs/experiment_reconciliation.md)
+
+**Version note (November 2026):** The existing PDF/PPTX are preserved as historical repository artifacts. A shorter reviewed report and revised presentation were prepared separately; they are **not yet uploaded to this repository**. See the reconciliation note before comparing any figures from the original SJTU summer-school slide deck with the frozen held-out pipeline. The study uses synthetic data, and collaborative contributions should be credited appropriately.
