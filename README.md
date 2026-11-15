@@ -318,4 +318,4 @@ contributions, while the presentation also
 summarizes collaborative summer-school experiments.
 Different experimental pipelines are clearly
 distinguished.
- uses synthetic data, and collaborative contributions should be credited appropriately.
+
