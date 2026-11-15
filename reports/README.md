@@ -1,16 +1,15 @@
 
+
 ## Research Portfolio
 
-- [Research Report](reports/SJTU_Limit_Order_Execution_Report.pdf)
-- [Research Presentation](reports/SJTU_Research_Presentation.pdf)
+- [Research Report](SJTU_Limit_Order_Execution_Report.pdf)
+- [Research Presentation](SJTU_Portfolio_Overleaf_Project.pdf)
 
-This portfolio presents research on predicting
-limit-order fill probabilities using limit order
-book information.
+This portfolio documents my research on
+limit-order fill probability prediction.
 
-The report documents my individual analysis,
+The report focuses on my individual analysis,
 while the presentation also includes results
 from the collaborative SJTU AI Summer School
-project. Experimental results should be
-interpreted within their respective model
-configurations and evaluation settings.
+project. Results from different experimental
+pipelines are not directly comparable.
