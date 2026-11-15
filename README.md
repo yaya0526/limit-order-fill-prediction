@@ -299,6 +299,12 @@ This project demonstrates disciplined probability and decision-policy workflows 
 - [`docs/releases/v0.1.0.md`](docs/releases/v0.1.0.md): first public release notes
 - [`CHANGELOG.md`](CHANGELOG.md): repository change history
 
+## AI Assistance Disclosure
+
+AI-assisted tools were used to support parts of the coding workflow, debugging, code organization, and the drafting and editing of documentation and presentation materials. Their use helped improve clarity and maintainability, but does not constitute independent verification of the experiments or reported results.
+
+The research report describes my individual analysis, while the presentation also draws on collaborative SJTU summer-school work. Experimental claims should be assessed against the linked code, recorded outputs, and stated limitations; AI-generated suggestions are not treated as experimental evidence.
+
 ## Citation and license
 
 Citation metadata are provided in [`CITATION.cff`](CITATION.cff).
